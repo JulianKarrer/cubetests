@@ -1,0 +1,59 @@
+@import url(./theme.css);
+
+/* override  */
+.reveal {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.katex-display {
+  font-size: 5.5vmin !important;
+  margin: var(--r-block-margin) !important;
+}
+
+.katex-html {
+  font-size: 5.5vmin !important;
+  margin: var(--r-block-margin) !important;
+}
+
+.top {
+  position: absolute;
+  top: 5vmin;
+}
+
+.slide-number {
+  font-family: Degular !important;
+  font-weight: 200;
+  font-size: 3vmin !important;
+  color: var(--r-main-color) !important;
+  background: none !important;
+}
+
+.reveal .progress {
+  height: 0.75vh !important;
+}
+
+
+/* custom */
+section {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#h1-title {
+  margin-bottom: 5vmin !important;
+}
+
+.matrix-container {
+  display: grid;
+  grid-gap: 20px;
+  font-size: 30px;
+  font-family: JBM;
+  padding: 10px;
+  border-left: 5px solid black;
+  border-right: 5px solid black;
+}
