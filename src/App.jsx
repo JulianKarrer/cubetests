@@ -3,16 +3,19 @@ import Reveal from "reveal.js";
 import "reveal.js/dist/reveal.css";
 import RevealMath from "reveal.js/plugin/math/math.js"
 import "./theme.css";
+import "./index.css"
 import './App.css'
 import Annotated from "./components/Annotate";
 import Setting from "./Setting";
 import DragMove from "./components/DragMove";
+import CubeGraph from "./CubeGraph";
+import SingleConstraint from "./SingleConstraint";
 
-function Matrix({ A, setA }) {
-  const cols = A[0].length
-  const rows = A.length
+function Matrix({ mat, setMat, label, style, withScalar = false, matReset = null }) {
+  const cols = mat[0].length
+  const rows = mat.length
 
-  const [initA, _] = useState(A.map(function (arr) {
+  const [initA, _] = useState(mat.map(function (arr) {
     return arr.slice();
   }))
 
@@ -31,10 +34,12 @@ function Matrix({ A, setA }) {
     y: 0
   });
   const handleDragMove = (e) => {
-    console.log(e)
-    setTranslate({
-      x: translate.x + e.movementX,
-      y: translate.y + e.movementY
+    console.log("dragging", e.movementX, e.movementY)
+    setTranslate(cur => {
+      return {
+        x: (cur.x + e.movementX),
+        y: (cur.y + e.movementY)
+      }
     });
   };
 
@@ -50,8 +55,9 @@ function Matrix({ A, setA }) {
         borderRadius: 15,
         padding: 15,
         zIndex: 1,
+        ...style
       }}
-      grabber={<span style={{ cursor: "pointer" }} onClick={() => { setIsExpanded(s => !s) }} onDoubleClick={() => { setA(initA) }}>{"$A$"}</span>}
+      grabber={<span style={{ cursor: "pointer" }} onClick={() => { setIsExpanded(s => !s) }} onDoubleClick={() => { setMat(matReset ? matReset : initA) }}>{label}</span>}
     >
       {/* label */}
 
@@ -65,14 +71,15 @@ function Matrix({ A, setA }) {
           opacity: isExpanded ? 1 : 0,
           overflow: "hidden",
           transition: "max-height 0.3s ease, opacity 0.2s ease",
+          pointerEvents: isExpanded ? "auto" : "none"
         }}
       >
         {Array.from(Array(rows).keys()).flatMap(r => (
           Array.from(Array(cols).keys()).flatMap(c => (
             <DragInput
               key={r.toString() + c.toString()}
-              value={A[r][c]}
-              setValue={(v) => { setA(A => modifyMat(A, r, c, v)) }}
+              value={mat[r][c]}
+              setValue={(v) => { setMat(A => modifyMat(A, r, c, v)) }}
               init={initA[r][c]}
             />
           ))
@@ -194,18 +201,28 @@ function App() {
 
 
   let A_init = [
+    [1, 0, -0.7],
+    [-0.5, 0, 0.1],
+    [0, 0, 1],
+    [0, 0, -0.6],
+    [0, 1, 0],
+    [0, -1, 0]
+  ]
+  let A_reset = [
     [1, 0, 0],
     [-1, 0, 0],
     [0, 0, 1],
     [0, 0, -1],
-    [0, 10, 0],
-    [0, -0.5, 0]
+    [0, 1, 0],
+    [0, -1, 0]
   ]
+  let b_init = [[-1], [-1], [-1], [-1], [-1], [-1]]
+  let c_init = [[1]]
 
   const [A, setA] = useState(A_init)
+  const [b, setB] = useState(b_init)
+  const [c, setC] = useState(c_init)
 
-  let b = [-1, -1, -1, -1, -1, -1]
-  let f = 1.0
   let varIndices = [0, 1, 2]
 
   return (
@@ -214,6 +231,7 @@ function App() {
         <section data-auto-animate>
           <h1 data-id="h1" id="h1-title">Fast Cube Tests for<br />LIA Constraint Solving</h1>
           <h3>Julian Karrer</h3>
+          <h5 style={{ marginTop: "10vmin" }}>Paper by Martin Bromberger and Christoph Weidenbach</h5>
         </section>
 
         <section data-auto-animate style={{ justifyContent: "flex-start" }}>
@@ -221,16 +239,49 @@ function App() {
             frag == 0 ? "Setting" :
               frag == 1 ? "Integers Only" :
                 frag == 2 ? "Polyhedra" :
-                  frag == 3 ? "Half-Planes" : ""
+                  frag == 3 ? "Half-Spaces" : ""
           }</h1>
-          <Matrix A={A} setA={setA} />
-          <Setting A={A} b={b} varIndices={varIndices} phase={frag} />
+          <Matrix mat={A} setMat={setA} label={"$A$"} matReset={A_reset} style={{
+            opacity: frag < 2 ? 0 : 1,
+            pointerEvents: frag < 2 ? "none" : "auto",
+          }} />
+          <Matrix mat={b} setMat={setB} label={"$b$"} style={{
+            left: 340,
+            opacity: frag < 2 ? 0 : 1,
+            pointerEvents: frag < 2 ? "none" : "auto",
+          }} />
+          <Matrix mat={c} setMat={setC} label={"$c$"} style={{
+            right: 100,
+            left: "auto",
+            opacity: frag < 2 ? 0 : 1,
+            pointerEvents: frag < 2 ? "none" : "auto",
+          }} />
+          <Setting A={A} b={b} c={c[0]} varIndices={varIndices} phase={frag} />
           <Annotated
             style={{
+              opacity: frag >= 2 ? 0 : 1,
+              pointerEvents: frag >= 2 ? "none" : "auto",
               position: "absolute", bottom: "8vh", background: "#f0f0f0ee",
               padding: "20px", paddingTop: "10px", borderRadius: "20px"
             }}
+            glossary={{
+              "\\le": "\\text{component-wise} \\le",
+              x: "x \\in \\mathbb{Z}^N",
+            }}
             content={"$A \\vec{x} \\le \\vec{b}$ with $x \\in \\mathbb{Z}^N$"}
+            revealReady={revealReady}
+          />
+          <Annotated
+            style={{
+              opacity: frag < 2 ? 0 : 1,
+              pointerEvents: frag < 2 ? "none" : "auto",
+              position: "absolute", bottom: "8vh", background: "#f0f0f0ee",
+              padding: "20px", paddingTop: "10px", borderRadius: "20px"
+            }}
+            glossary={{
+              "\\le": "\\text{component-wise} \\le",
+            }}
+            content={"$A \\vec{x} \\le \\vec{b} \\cdot c$"}
             revealReady={revealReady}
           />
           <span className="fragment"></span>
@@ -239,11 +290,120 @@ function App() {
         </section>
 
         <section data-auto-animate>
-          <h1 data-id="h1">Test Slide</h1>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          <h1 data-id="h1">Cube Tests</h1>
+          <div className="leftbound">
+            <div className="top-space">Cube Definition:
+              <Annotated content={`$
+              \\begin{aligned}
+                C_e^N(\\vec{z}) ≔& \\left\\{ \\vec{x} \\in \\mathbb{R}^N \\, \\middle | \\,  \\forall j \\in \\mathbb{N} _1^N :\\quad | \\vec{x}_j-\\vec{z}_j | \\le \\frac{e}{2} \\right \\} \\\\
+                =&\\left\\{ \\vec{x} \\in \\mathbb{R}^N \\, \\middle | \\,  
+                  \\left|\\left| x - z \\right|\\right|_\\infty \\le \\frac{e}{2}
+                \\right \\}
+              \\end{aligned}
+                $`} revealReady={revealReady} /></div>
+            <div className="top-space">Ployhedron Definition: </div>
+            <Annotated content={`$P^A_b ≔ \\left\\{ \\vec{x} \\in \\mathbb{R}^N \\, \\middle | \\,  A\\vec{x}-\\vec{b} \\le 0 \\right \\}$`}
+              glossary={{
+                A: "A \\in \\mathbb{R}^{M\\times N}",
+                b: "b \\in  \\mathbb{R}^{M}",
+                e: "e \\in  \\mathbb{R}_+",
+                c: "c \\in \\mathbb{R}",
+                x: "x \\in \\mathbb{R}^N",
+                "\\le": "\\text{component - wise} \\le",
+              }}
+              revealReady={revealReady} />
+            <p className="top-space">We test for {`$C_e^N(\\vec{z}) \\subseteq P^A_b$`} {'$\\qquad$'} {"$\\lceil \\vec{z} \\rfloor \\in \\mathbb{Z}^N$"} is candidate</p>
+          </div>
+        </section>
+        <section data-auto-animate>
+          <h1 data-id="h1">Motivation</h1>
+          <CubeGraph />
+        </section>
+
+        <section data-auto-animate>
+          <h1 data-id="h1">Single Constraint</h1>
+          <div style={{ display: "flex", width: "100vw", marginTop: "5vmin" }}>
+            <div style={{ width: "40vw", height: "60vh", display: "flex", alignItems: "center", marginLeft: "50px" }}>
+              <SingleConstraint />
+            </div>
+            <div style={{ maxWidth: "60vw", marginLeft: "50px", textAlign: "left" }}>
+              <Annotated content={`$\\begin{aligned}
+            &\\forall \\vec{x} \\in C_e^N(\\vec{z}): 
+            \\underbrace{\\vec{a}_i \\cdot \\vec{x}}_{\\textit{objective}} \\le \\underbrace{b_i}_{\\textit{upper bound}} \\\\ \\\\
+
+            &\\Longleftrightarrow\\max_{x\\in C_e^N(\\vec{z})} \\left\\{\\vec{a}_i \\cdot \\vec{x}\\right\\}  \\le b_i  \\\\
+            \\end{aligned}$`}
+
+                glossary={{}}
+                style={{ marginBottom: "50px" }}
+                revealReady={revealReady} />
+              <div data-id={"vertex-set"}>
+                <span style={{ width: "100%" }}>Vertex Set:</span><br />
+                {` $$\\mathbb{V}\\left(\\vec{z}, e\\right)  ≔ \\left\\{  \\left( z_1 \\pm \\frac{e}{2}, \\dots , z_N \\pm \\frac{e}{2}\\right)^T
+              \\right \\}  $$`}
+              </div>
+            </div>
+          </div>
+        </section>
+        <section data-auto-animate style={{ textAlign: "left" }}>
+          <h1 data-id="h1">Single Constraint</h1>
+          <div data-id={"vertex-set"} style={{ marginTop: "5vmin" }}>
+            <span style={{ width: "100%" }}>Vertex Set into Objective:</span><br />
+            {` $$
+             \\max_{\\vec{x}\\in\\mathbb{V}\\left(\\vec{z}, e\\right)} \\vec{a}_i^T \\vec{x}
+             = \\max\\left\\{ \\vec{a}_i \\cdot \\left( z_1 \\pm \\frac{e}{2}, \\dots , z_N \\pm \\frac{e}{2}\\right)^T
+              \\right \\}  $$`}
+          </div>
+          <div style={{ marginTop: "50px" }}>
+            {`$$=
+             \\vec{a}_i \\cdot \\vec{z} +  \\frac{e}{2}\\max\\left\\{ 
+             \\sum_{j=1}^N \\pm a_i
+            \\right\\}$$`}
+
+            <span data-id="cube-transform-1d-res">{`$$= \\vec{a}_i\\cdot\\vec{z} + \\frac{e}{2}\\sum_{j=1}^N \\left| a_i\\right|$$`}</span>
+          </div>
+        </section>
+        <section data-auto-animate style={{ textAlign: "left" }}>
+          <h1 data-id="h1" >Multiple Constraints</h1>
+
+          <span data-id="cube-transform-1d-res" style={{ marginTop: "10vmin" }}>
+            {`$$
+            C_e^N(\\vec{z})\\subseteq P^{a_i}_{b_i}
+            \\quad\\Longleftrightarrow \\quad
+            \\vec{a}_i\\cdot\\vec{z} + \\frac{e}{2}\\left|\\left| a_i\\right|\\right|_1 \\le b_i 
+            $$ `}
+          </span>
+          <div style={{
+            border: "2px black solid", borderRadius: "20px", padding: "3vmin", margin: "15vmin", position: "relative", textAlign: "center"
+          }}>
+            <span style={{ position: "absolute", top: "-8vmin", width: "100%", left: 0, fontWeight: "bold" }}>Linear Cube Transformation</span>
+            {`$$ \\begin{aligned}
+            C_e^N(\\vec{z})\\subseteq P^{A}_{b}
+            \\Longleftrightarrow 
+            &A\\vec{z} \\le \\vec{b}'\\\\
+            \\text{where: }\\quad&b_i' ≔ b_i - \\frac{e}{2}\\left|\\left| a_i\\right|\\right|_1 
+            \\end{aligned}$$ `}
+          </div>
+        </section>
+
+
+        <section data-auto-animate>
+          <h1 data-id="h1">Test Slide: Rounding</h1>
+          <ul>
+            <li style={{ marginTop: "3vmin" }}>
+              {"$\\lceil x \\rfloor$"} is closest integer point to {"$x$"}<br />
+              {"$\\forall x\\in\\mathbb{R}^N, \\forall x'\\in\\mathbb{Z}^N, \\forall p \\ge 1: \\, \\left|\\left| x - \\lceil x \\rfloor\\right|\\right|_p \\le \\left|\\left| x - x'\\right|\\right|_p$"}
+            </li>
+            <li style={{ marginTop: "3vmin" }}>
+              {"$C_e^N(\\vec{z})$"} contains integer point {"$\\Longleftrightarrow \\lceil \\vec{z} \\rfloor \\in C_e^N(\\vec{z})$"}
+            </li>
+            <li style={{ marginTop: "3vmin" }}>
+              {"$C_1^N(\\vec{z})$"}is smallest cube guaranteed to contain integer point
+            </li>
+          </ul>
         </section>
       </div>
-    </div>
+    </div >
   )
 }
 

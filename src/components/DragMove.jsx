@@ -1,6 +1,6 @@
 // https://javascript.plainenglish.io/how-to-make-a-simple-custom-drag-to-move-component-in-react-f67d5c99f925
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 export default function DragMove({
   onPointerDown = () => { },
@@ -14,6 +14,9 @@ export default function DragMove({
 }) {
 
   const [isDragging, setIsDragging] = useState(false);
+  const isDraggingRef = useRef(false);
+  useEffect(() => { isDraggingRef.current = isDragging }, [isDragging]);
+
 
   const handlePointerDown = (e) => {
     setIsDragging(true);
@@ -28,16 +31,17 @@ export default function DragMove({
   };
 
   const handlePointerMove = (e) => {
-    if (isDragging) onDragMove(e);
-
+    if (isDraggingRef.current) onDragMove(e);
     onPointerMove(e);
   };
 
   useEffect(() => {
     window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('mousemove', handlePointerMove);
 
     return () => {
       window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('mousemove', handlePointerMove);
     }
   }, []);
 
@@ -51,8 +55,7 @@ export default function DragMove({
       className={className}
     >
       <div
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}>
+        onPointerDown={handlePointerDown}>
         {grabber}
       </div>
       {children}

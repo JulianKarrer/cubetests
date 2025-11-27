@@ -18,14 +18,16 @@ export default function Annotated({
     glossary = {
         A: "A \\in \\mathbb{R}^{M\\times N}",
         b: "b \\in  \\mathbb{R}^{M}",
-        x: "x \\in \\mathbb{Z}^N",
-        "\\le": "\\text{component-wise} \\le",
+        c: "c \\in \\mathbb{R}",
+        e: "e \\in  \\mathbb{R}_{\\ge 0}",
+        "\\vec{z}": "z \\in \\mathbb{R}^N",
     },
     revealReady = false,
     popupFontSize = "1vmin",
     popupMaxWidth = 520,
     popupOffset = "-12vmin",
     className = "",
+    exclude = [],
     style
 }) {
     const containerRef = useRef(null);
@@ -53,6 +55,7 @@ export default function Annotated({
         "\\times": "×",
         "\\cdot": "·",
         "\\in": "∈",
+        "'": "′",
     };
 
     // matchMap

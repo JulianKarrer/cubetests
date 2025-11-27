@@ -1,7 +1,7 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Grid, Points, Point, PointMaterial } from '@react-three/drei'
 import * as THREE from 'three'
-import { useEffect, useMemo, useOptimistic, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry'
 import { create } from 'zustand'
 import { useSpring, animated } from '@react-spring/three'
@@ -111,7 +111,7 @@ function HalfPlane({ normal, d, size = 10, color = 'orange', opacity = 0.5, show
     // centre at -normal * d / ||n||^2 
     const n = normal.clone()
     const normLenSq = n.lengthSq()
-    const extraOffFact = (1 + 1e-2) // prevent flicker by slight offset
+    const extraOffFact = (1 + 2e-2) // prevent flicker by slight offset
     const center = (normLenSq > EPS) ? n.clone().multiplyScalar(-d / normLenSq * extraOffFact) : new THREE.Vector3()
     const z = new THREE.Vector3(0, 0, 1)
     const q = new THREE.Quaternion()
@@ -125,6 +125,7 @@ function HalfPlane({ normal, d, size = 10, color = 'orange', opacity = 0.5, show
                     color={color}
                     transparent
                     depthTest={true}
+                    depthWrite={false}
                     opacity={opacity}
                     side={THREE.DoubleSide}
                 />
@@ -163,10 +164,11 @@ function FeasibleVolume({ vertices, color = 'royalblue', simple, opacity = 0.35 
                     side={THREE.DoubleSide}
                 />
             </> : <>
-                <meshStandardMaterial
+                <meshPhysicalMaterial
                     color={color}
                     transparent
                     depthTest={true}
+                    depthWrite={true}
                     opacity={opacity}
                     side={THREE.DoubleSide}
                 />
@@ -220,7 +222,7 @@ function ReactiveCamera({ controllable }) {
     })
 }
 
-export default function Setting({ A, b, varIndices, phase, style }) {
+export default function Setting({ A, b, c, varIndices, phase, style }) {
     // define phases
     const p2d = 0
     const p2dp = 1
@@ -235,11 +237,11 @@ export default function Setting({ A, b, varIndices, phase, style }) {
         if (!A || !b) return []
         const rows = []
         for (let r = 0; r < A.length; r++) {
-            const p = planeFromInequality(A[r], b[r], varIndices)
+            const p = planeFromInequality(A[r], c * b[r], varIndices)
             rows.push(p)
         }
         return rows
-    }, [A, b, varIndices])
+    }, [A, b, c, varIndices])
     const vertices = useMemo(() => computeFeasibleVertices(planes), [planes])
 
     // animate camera
@@ -280,13 +282,14 @@ export default function Setting({ A, b, varIndices, phase, style }) {
 
             {/* feasible volume */}
             <FeasibleVolume vertices={vertices} simple={
-                // phase < p3d
-                false
-            } color={'royalblue'} opacity={0.1} />
+                phase < p3d
+                // false
+            } color={'royalblue'} opacity={0.5} />
 
             {/* controls */}
             <OrbitControls enabled={phase >= p3d} enablePan={false} />
             <Grid cellSize={50} infiniteGrid={true} side={2} sectionColor={"#ffffff"} position={[0, 0, 0]} />
+
         </Canvas>
     </div >)
 }
