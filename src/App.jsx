@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+
+import katex from "katex";
+import "katex/dist/katex.min.css";
 import Reveal from "reveal.js";
 import "reveal.js/dist/reveal.css";
+
+
 import RevealMath from "reveal.js/plugin/math/math.js"
 import "./theme.css";
 import "./index.css"
 import './App.css'
+import "./components/jsxgraphcore.js"
 import Annotated from "./components/Annotate";
 import Setting from "./Setting";
 import DragMove from "./components/DragMove";
@@ -66,11 +72,10 @@ function Matrix({ mat, setMat, label, style, withScalar = false, matReset = null
         className="matrix-container"
         style={{
           gridTemplateColumns: "auto ".repeat(cols),
-          transition: "height 500ms ease",
           maxHeight: isExpanded ? "1000px" : "0px",
           opacity: isExpanded ? 1 : 0,
           overflow: "hidden",
-          transition: "max-height 0.3s ease, opacity 0.2s ease",
+          transition: "max-height 0.3s ease, opacity 0.2s ease, height 500ms ease",
           pointerEvents: isExpanded ? "auto" : "none"
         }}
       >
@@ -158,7 +163,7 @@ function App() {
       hideInactiveCursor: false,
 
       katex: {
-        local: 'node_modules/katex',
+        // local: 'node_modules/katex',
         delimiters: [
           { left: '$$', right: '$$', display: true },
           { left: '$', right: '$', display: false },

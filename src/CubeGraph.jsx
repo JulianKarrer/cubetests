@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react"
 
+
 export default function CubeGraph({ }) {
     // logic for defining the board and drawing to it
     const logic = () => {

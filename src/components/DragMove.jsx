@@ -48,7 +48,7 @@ export default function DragMove({
   return (
     <div
       style={{
-        userSelect: "none", cursor: "pointer",
+        userSelect: "none",
         cursor: isDragging ? "grabbing" : "grab",
         ...style
       }}
