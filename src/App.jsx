@@ -16,8 +16,10 @@ import Setting from "./Setting";
 import DragMove from "./components/DragMove";
 import CubeGraph from "./CubeGraph";
 import SingleConstraint from "./SingleConstraint";
+import CubeTransform2D from "./CubeTransform2D.jsx";
+import CubeTransform3D from "./CubeTransform3D.jsx";
 
-function Matrix({ mat, setMat, label, style, withScalar = false, matReset = null }) {
+function Matrix({ mat, setMat, label, style, lower_bound: lowerBound = null, matReset = null, initiallyExpanded = false }) {
   const cols = mat[0].length
   const rows = mat.length
 
@@ -30,17 +32,16 @@ function Matrix({ mat, setMat, label, style, withScalar = false, matReset = null
     var newA = A.map(function (arr) {
       return arr.slice();
     });
-    newA[r][c] = v
+    newA[r][c] = lowerBound !== null ? Math.max(lowerBound, v) : v
     return newA
   }
 
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(initiallyExpanded)
   const [translate, setTranslate] = useState({
     x: 0,
     y: 0
   });
   const handleDragMove = (e) => {
-    console.log("dragging", e.movementX, e.movementY)
     setTranslate(cur => {
       return {
         x: (cur.x + e.movementX),
@@ -221,12 +222,14 @@ function App() {
     [0, 1, 0],
     [0, -1, 0]
   ]
-  let b_init = [[-1], [-1], [-1], [-1], [-1], [-1]]
+  let b_init = [[1], [1], [1], [1], [1], [1]]
   let c_init = [[1]]
+  let e_init = [[0]]
 
   const [A, setA] = useState(A_init)
   const [b, setB] = useState(b_init)
   const [c, setC] = useState(c_init)
+  const [e, setE] = useState([[0]])
 
   let varIndices = [0, 1, 2]
 
@@ -272,6 +275,8 @@ function App() {
             glossary={{
               "\\le": "\\text{component-wise} \\le",
               x: "x \\in \\mathbb{Z}^N",
+              A: "A \\in \\mathbb{R}^{M\\times N}",
+              b: "b \\in  \\mathbb{R}^{M}",
             }}
             content={"$A \\vec{x} \\le \\vec{b}$ with $x \\in \\mathbb{Z}^N$"}
             revealReady={revealReady}
@@ -285,6 +290,10 @@ function App() {
             }}
             glossary={{
               "\\le": "\\text{component-wise} \\le",
+              x: "x \\in \\mathbb{Z}^N",
+              A: "A \\in \\mathbb{R}^{M\\times N}",
+              b: "b \\in  \\mathbb{R}^{M}",
+              c: "c \\in  \\mathbb{R}",
             }}
             content={"$A \\vec{x} \\le \\vec{b} \\cdot c$"}
             revealReady={revealReady}
@@ -302,10 +311,16 @@ function App() {
               \\begin{aligned}
                 C_e^N(\\vec{z}) ≔& \\left\\{ \\vec{x} \\in \\mathbb{R}^N \\, \\middle | \\,  \\forall j \\in \\mathbb{N} _1^N :\\quad | \\vec{x}_j-\\vec{z}_j | \\le \\frac{e}{2} \\right \\} \\\\
                 =&\\left\\{ \\vec{x} \\in \\mathbb{R}^N \\, \\middle | \\,  
-                  \\left|\\left| x - z \\right|\\right|_\\infty \\le \\frac{e}{2}
+                  \\left|\\left| \\vec{x} - \\vec{z} \\right|\\right|_\\infty \\le \\frac{e}{2}
                 \\right \\}
               \\end{aligned}
-                $`} revealReady={revealReady} /></div>
+                $`}
+                glossary={{
+                  e: "e\\in\\mathbb{R}_{\\ge 0}",
+                  x: "\\vec{x} \\in \\mathbb{R}^N",
+                  z: "\\vec{z} \\in \\mathbb{R}^N",
+                }}
+                revealReady={revealReady} /></div>
             <div className="top-space">Ployhedron Definition: </div>
             <Annotated content={`$P^A_b ≔ \\left\\{ \\vec{x} \\in \\mathbb{R}^N \\, \\middle | \\,  A\\vec{x}-\\vec{b} \\le 0 \\right \\}$`}
               glossary={{
@@ -390,7 +405,19 @@ function App() {
             \\end{aligned}$$ `}
           </div>
         </section>
-
+        <section data-auto-animate>
+          <h1 data-id="h1" className="top" >Geometric Meaning</h1>
+          <CubeTransform3D A={A} b={b} e={e} setE={setE} varIndices={varIndices} />
+          <Matrix mat={A} setMat={setA} label={"$A$"} initiallyExpanded={false} matReset={A_reset} />
+          <Matrix mat={b} setMat={setB} label={"$b$"} initiallyExpanded={false} style={{
+            top: "50%",
+            left: 15,
+          }} />
+          <Matrix mat={e} setMat={setE} label={"$e$"} initiallyExpanded={true} lower_bound={0} matReset={e_init} style={{
+            top: "50%",
+            left: 175,
+          }} />
+        </section>
 
         <section data-auto-animate>
           <h1 data-id="h1">Test Slide: Rounding</h1>
