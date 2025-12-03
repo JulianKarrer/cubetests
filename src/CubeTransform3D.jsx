@@ -1,15 +1,16 @@
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Grid, Box, Wireframe } from '@react-three/drei'
+import { OrbitControls, Grid, Box, Wireframe, Sphere } from '@react-three/drei'
 import { useEffect, useMemo, useState } from 'react'
 import { planeFromInequality, computeFeasibleVertices, FeasibleVolume, FeasibleWire } from './components/3DPrimitives'
 
 
-export default function CubeTransform3D({ A, b, e, setE, varIndices, style }) {
+export default function CubeTransform3D({ A, b, e, setE, varIndices, chebyshev, style }) {
     const camPosFinal = [0, 4, -8]
 
     const l1_norm = list => list.reduce((prev, cur) => Math.abs(prev) + Math.abs(cur), 0)
+    const l2_norm = list => Math.sqrt(list.reduce((prev, cur) => prev + cur * cur, 0))
     const linear_cube_transform = (A, b, e) => b.map((b_i, i) =>
-        b_i[0] - e[0][0] * 0.5 * l1_norm(A[i])
+        b_i[0] - e[0][0] * 0.5 * (chebyshev ? l2_norm(A[i]) : l1_norm(A[i]))
     )
 
     // original volume
@@ -33,7 +34,7 @@ export default function CubeTransform3D({ A, b, e, setE, varIndices, style }) {
             )
         }
         return rows
-    }, [A, b, e, varIndices])
+    }, [A, b, e, varIndices, chebyshev])
     const vertices = useMemo(() => computeFeasibleVertices(planes), [planes])
 
     const [verts6, setVerts6] = useState(vertices)
@@ -48,6 +49,7 @@ export default function CubeTransform3D({ A, b, e, setE, varIndices, style }) {
         }
     }, [vertices])
 
+
     return (<div style={{ height: "100vh", width: "100%" }}>
         <Canvas camera={{ position: camPosFinal, fov: 45, }}>
             {/* lighting */}
@@ -59,11 +61,17 @@ export default function CubeTransform3D({ A, b, e, setE, varIndices, style }) {
             <FeasibleVolume vertices={vertices} simple={true} color={'royalblue'} opacity={1} />
             <FeasibleVolume vertices={vertices_orig} color={'royalblue'} opacity={0.1} />
 
-            {verts6.map((v_i, i) => {
-                return <Box position={[v_i.x, v_i.y, v_i.z]} scale={safe_e[0][0]}>
+            {chebyshev ? verts6.map((v_i, i) => {
+                return <Sphere position={[v_i.x, v_i.y, v_i.z]} scale={safe_e[0][0] / 2}>
                     <meshStandardMaterial wireframe color={"orange"} />
-                </Box>
-            })}
+                </Sphere>
+            }) :
+                verts6.map((v_i, i) => {
+                    return <Box position={[v_i.x, v_i.y, v_i.z]} scale={safe_e[0][0]}>
+                        <meshStandardMaterial wireframe color={"orange"} />
+                    </Box>
+                })
+            }
 
             {/* controls */}
             <OrbitControls enabled={true} enablePan={false} />

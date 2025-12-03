@@ -4,7 +4,7 @@ import katex from "katex";
 import "katex/dist/katex.min.css";
 import Reveal from "reveal.js";
 import "reveal.js/dist/reveal.css";
-
+import paper from "./assets/unit-cube-test.pdf"
 
 import RevealMath from "reveal.js/plugin/math/math.js"
 import "./theme.css";
@@ -233,6 +233,8 @@ function App() {
 
   let varIndices = [0, 1, 2]
 
+  const [chebyshev, setChebyshev] = useState(false);
+
   return (
     <div className="reveal" ref={deckDivRef}>
       <div className="slides">
@@ -321,7 +323,7 @@ function App() {
                   z: "\\vec{z} \\in \\mathbb{R}^N",
                 }}
                 revealReady={revealReady} /></div>
-            <div className="top-space">Ployhedron Definition: </div>
+            <div className="top-space">Polyhedron Definition: </div>
             <Annotated content={`$P^A_b ≔ \\left\\{ \\vec{x} \\in \\mathbb{R}^N \\, \\middle | \\,  A\\vec{x}-\\vec{b} \\le 0 \\right \\}$`}
               glossary={{
                 A: "A \\in \\mathbb{R}^{M\\times N}",
@@ -407,7 +409,7 @@ function App() {
         </section>
         <section data-auto-animate>
           <h1 data-id="h1" className="top" >Geometric Meaning</h1>
-          <CubeTransform3D A={A} b={b} e={e} setE={setE} varIndices={varIndices} />
+          <CubeTransform3D A={A} b={b} e={e} setE={setE} varIndices={varIndices} chebyshev={chebyshev} />
           <Matrix mat={A} setMat={setA} label={"$A$"} initiallyExpanded={false} matReset={A_reset} />
           <Matrix mat={b} setMat={setB} label={"$b$"} initiallyExpanded={false} style={{
             top: "50%",
@@ -417,9 +419,29 @@ function App() {
             top: "50%",
             left: 175,
           }} />
+          <div style={{ position: "absolute", left: 15, bottom: 15, fontSize: "calc(var(--r-main-font-size) * 0.75)" }}>
+            Chebyshev
+            <input type="checkbox" checked={chebyshev} onChange={e => setChebyshev(e.target.checked)} style={{
+              width: "calc(var(--r-main-font-size) * 0.5)",
+              height: "calc(var(--r-main-font-size) * 0.5)",
+              marginLeft: 10,
+            }}></input>
+          </div>
         </section>
 
         <section data-auto-animate>
+          <h1 data-id="h1">Summary</h1>
+        </section>
+        <section data-auto-animate>
+          <h1 data-id="h1">Appendix:  Paper</h1>
+          <embed src={paper} style={{ width: "80vw", height: "80vh" }}
+            type="application/pdf" />
+        </section>
+
+
+
+
+        {/* <section data-auto-animate>
           <h1 data-id="h1">Test Slide: Rounding</h1>
           <ul>
             <li style={{ marginTop: "3vmin" }}>
@@ -433,7 +455,7 @@ function App() {
               {"$C_1^N(\\vec{z})$"}is smallest cube guaranteed to contain integer point
             </li>
           </ul>
-        </section>
+        </section> */}
       </div>
     </div >
   )
