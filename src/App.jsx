@@ -142,6 +142,28 @@ function DragInput({ init = 0, value, setValue }) {
 }
 
 
+function Bordered({ children, style }) {
+  return <div style={{
+    border: "2px black solid", borderRadius: "20px", padding: "3vmin", margin: "5vmin", position: "relative", textAlign: "center", ...style
+  }}>
+    {children}
+  </div>
+}
+
+function LinearCubeTransform({ style }) {
+  return (
+    <Bordered style={{ margin: "15vmin", ...style }}>
+      <span style={{ position: "absolute", top: "-8vmin", width: "100%", left: 0, fontWeight: "bold" }}>Linear Cube Transformation</span>
+      {`$$ \\begin{aligned}
+      C_e^N(\\vec{z})\\subseteq P^{A}_{b}
+      \\Longleftrightarrow 
+      &A\\vec{z} \\le \\vec{b}'\\\\
+      \\text{where: }\\quad&b_i' ≔ b_i - \\frac{e}{2}\\left|\\left| a_i\\right|\\right|_1 
+      \\end{aligned}$$ `}
+    </Bordered>
+  )
+}
+
 function App() {
   // initialize Reveal JS
   const deckDivRef = useRef(null);
@@ -395,17 +417,7 @@ function App() {
             \\vec{a}_i\\cdot\\vec{z} + \\frac{e}{2}\\left|\\left| a_i\\right|\\right|_1 \\le b_i 
             $$ `}
           </span>
-          <div style={{
-            border: "2px black solid", borderRadius: "20px", padding: "3vmin", margin: "15vmin", position: "relative", textAlign: "center"
-          }}>
-            <span style={{ position: "absolute", top: "-8vmin", width: "100%", left: 0, fontWeight: "bold" }}>Linear Cube Transformation</span>
-            {`$$ \\begin{aligned}
-            C_e^N(\\vec{z})\\subseteq P^{A}_{b}
-            \\Longleftrightarrow 
-            &A\\vec{z} \\le \\vec{b}'\\\\
-            \\text{where: }\\quad&b_i' ≔ b_i - \\frac{e}{2}\\left|\\left| a_i\\right|\\right|_1 
-            \\end{aligned}$$ `}
-          </div>
+          <LinearCubeTransform />
         </section>
         <section data-auto-animate>
           <h1 data-id="h1" className="top" >Geometric Meaning</h1>
@@ -427,6 +439,44 @@ function App() {
               marginLeft: 10,
             }}></input>
           </div>
+        </section>
+
+        <section data-auto-animate>
+          <h1 data-id="h1">Largest Cube Test</h1>
+          <Bordered>
+            {`$$\\begin{aligned}
+            e^* \\coloneqq \\max_{e\\in\\mathbb{R},\\, \\vec{z}\\in\\mathbb{R}^N} \\qquad &e  \\\\
+            \\text{st.}  \\qquad A\\vec{z} + \\frac{e}{2}\\vec{a}' &\\le b \\quad\\textit{where}\\quad \\vec{a}_i' \\coloneqq \\left|\\left|\\vec{a}_i\\right|\\right|_1\\\\
+             0 &\\le e
+          \\end{aligned}$$`}
+          </Bordered>
+          <ul>
+            <li>Solution with Simplex since {"$\\vec{z}\\in\\mathbb{R}^N$"}</li>
+            <li>{"$\\Omega(e) \\subseteq P^A_b$"} and {"$\\Omega(e=0) = P^A_b$"}</li>
+            <li>Find feasible {"$\\vec{z}$"} even for {"$e^*=\\infty$"}</li>
+          </ul>
+        </section>
+
+        <section data-auto-animate>
+          <h1 data-id="h1">Unit Cube Test</h1>
+          <Bordered>
+            {`$$A\\vec{z} \\le \\vec{b}' \\quad\\textit{where}\\quad \\vec{b}_i' \\coloneqq \\vec{b}_i - \\frac{1}{2} \\left|\\left|\\vec{a}_i\\right|\\right|_1$$`}
+          </Bordered>
+          <ul>
+            <li>Feasibility, no objective function</li>
+            <li><span data-id="int-solution-guarantee">Guarantees integer solution {"$\\left\\lceil \\vec{z} \\right\\rfloor$"}</span></li>
+          </ul>
+        </section>
+
+        <section data-auto-animate>
+          <h1 data-id="h1">Rounding Lemma</h1>
+          <span data-id="int-solution-guarantee">{"$C_1^N(\\vec{z}) \\subseteq P^A_b$"} guarantees integer solution {"$\\left\\lceil \\vec{z} \\right\\rfloor$"}?</span>
+          <Bordered>
+            <ul>
+              <li>{"$\\forall z_j \\in \\mathbb{R}: \\, \\left| \\left\\lceil z_j \\right\\rfloor - z_j\\right| \\le \\frac{1}{2}$"}</li>
+              <li>{"$\\left\\lceil \\left(\\frac{1}{2}, \\dots, \\frac{1}{2}\\right)^T \\right\\rfloor \\in C_1^N \\left(\\left(\\frac{1}{2}, \\dots, \\frac{1}{2}\\right)^T\\right)$"}</li>
+            </ul>
+          </Bordered>
         </section>
 
         <section data-auto-animate>
