@@ -18,6 +18,7 @@ import CubeGraph from "./CubeGraph";
 import SingleConstraint from "./SingleConstraint";
 import CubeTransform2D from "./CubeTransform2D.jsx";
 import CubeTransform3D from "./CubeTransform3D.jsx";
+import Simplex from "./Simplex.jsx";
 
 function Matrix({ mat, setMat, label, style, lower_bound: lowerBound = null, matReset = null, initiallyExpanded = false }) {
   const cols = mat[0].length
@@ -401,10 +402,10 @@ function App() {
           <div style={{ marginTop: "50px" }}>
             {`$$=
              \\vec{a}_i \\cdot \\vec{z} +  \\frac{e}{2}\\max\\left\\{ 
-             \\sum_{j=1}^N \\pm a_i
+             \\sum_{j=1}^N \\pm a_{ij}
             \\right\\}$$`}
 
-            <span data-id="cube-transform-1d-res">{`$$= \\vec{a}_i\\cdot\\vec{z} + \\frac{e}{2}\\sum_{j=1}^N \\left| a_i\\right|$$`}</span>
+            <span data-id="cube-transform-1d-res">{`$$= \\vec{a}_i\\cdot\\vec{z} + \\frac{e}{2}\\sum_{j=1}^N \\left|a_{ij}\\right|$$`}</span>
           </div>
         </section>
         <section data-auto-animate style={{ textAlign: "left" }}>
@@ -455,6 +456,18 @@ function App() {
             <li>{"$\\Omega(e) \\subseteq P^A_b$"} and {"$\\Omega(e=0) = P^A_b$"}</li>
             <li>Find feasible {"$\\vec{z}$"} even for {"$e^*=\\infty$"}</li>
           </ul>
+        </section>
+
+        <section data-auto-animate>
+          <h1 data-id="h1" className="top">Simplex Algorithm</h1>
+          <Matrix mat={A} setMat={setA} label={"$A$"} initiallyExpanded={false} matReset={A_reset} />
+          <Matrix mat={b} setMat={setB} label={"$b$"} initiallyExpanded={false} style={{
+            top: 15,
+            right: 15,
+            left: "auto",
+            // width: 100,
+          }} />
+          <Simplex A={A} b={b} varIndices={varIndices} />
         </section>
 
         <section data-auto-animate>
