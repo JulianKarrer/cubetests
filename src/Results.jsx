@@ -1,8 +1,8 @@
 import { Fragment, useState } from "react"
 
 const NAMES = ["CAV-2009", "DILLIG", "PRIME-CONE", "SLACKS", "ROTATE"]
-const INSTANCES = [503, 229, 19, 229, 233]
-const ORIG_INSTANCES = [591, 233, 37, 233, 233]
+const INSTANCES = [503, 229, 19, 229, 229]
+const ORIG_INSTANCES = [591, 233, 37, 233, 229]
 const SOLVERS = ["SPASS-IQ-0.1+uc", "SPASS-IQ-0.1", "ctrl-ergo", "cvc4-1.4", "mathsat5-3.9", "yices-2.4.2", "z3-4.4.0",]
 const DATA = [
     ["SPASS-IQ-0.1+uc", 503, 22, 229, 9, 19, 0.4, 229, 26, 229, 9],

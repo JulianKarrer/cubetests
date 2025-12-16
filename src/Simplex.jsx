@@ -21,7 +21,7 @@ function DirectionColouredVolume({ vertices, c, setFmin, setFmax }) {
     const objective = (x, y, z) => x * c[0] + y * c[1] + z * c[2]
     const geom = useMemo(() => {
         const geo = feasibleGeometry(vertices)
-        if (geo === null) {
+        if (geo == null) {
             return null
         }
         // const workingGeo = geo.index ? geo.toNonIndexed() : geo
@@ -36,6 +36,9 @@ function DirectionColouredVolume({ vertices, c, setFmin, setFmax }) {
         const verts = []
         for (let i = 0; i < vertexCount; i++) {
             verts.push([pos.getX(i), pos.getY(i), pos.getZ(i)])
+        }
+        if (verts.length == 0) {
+            return null
         }
         const f_v = verts.map(([x, y, z]) => objective(x, y, z, c))
         const f_min = Math.min.apply(null, f_v)

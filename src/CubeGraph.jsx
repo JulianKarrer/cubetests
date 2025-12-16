@@ -10,6 +10,7 @@ export default function CubeGraph({ name = "cubegraph1", fixedE = false }) {
         const b_u = 4 * (fixedE ? 0.4 : 1)
         const s = fixedE ? 10 : 0.4
         const e_max = fixedE ? 1 : 7
+        const e_start = fixedE ? 0.5 : e_max / 3
         const e_min = fixedE ? 0.01 : 0.3
 
         const board = JXG.JSXGraph.initBoard(name, {
@@ -43,7 +44,7 @@ export default function CubeGraph({ name = "cubegraph1", fixedE = false }) {
 
         const o = fixedE ? 0.2 : 0.5
         const w = fixedE ? 1 : 2
-        const e_slider = board.create('slider', [[b_l + o, b_d + o], [b_l + w + o, b_d + o], [e_min, e_max / 3, e_max]], {
+        const e_slider = board.create('slider', [[b_l + o, b_d + o], [b_l + w + o, b_d + o], [e_min, e_start, e_max]], {
             name: 'e',
             withLabel: true,
             label: { fontSize: 20 }

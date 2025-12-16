@@ -532,17 +532,6 @@ function App() {
         </section>
 
         <section data-auto-animate>
-          <h1 data-id="h1">Unit Cube Test</h1>
-          <Bordered>
-            {`$$A\\vec{z} \\le \\vec{b}' \\quad\\textit{where}\\quad \\vec{b}_i' \\coloneqq \\vec{b}_i - \\frac{1}{2} \\left|\\left|\\vec{a}_i\\right|\\right|_1$$`}
-          </Bordered>
-          <ul>
-            <li>Feasibility, no objective function</li>
-            <li><span data-id="int-solution-guarantee">Guarantees integer solution {"$\\left\\lceil \\vec{z} \\right\\rfloor$"}</span></li>
-          </ul>
-        </section>
-
-        <section data-auto-animate>
           <h1 data-id="h1">Motivation</h1>
           <CubeGraph name={"cubegraph2"} fixedE={true} />
         </section>
@@ -551,11 +540,23 @@ function App() {
           <h1 data-id="h1">Closest point Lemma</h1>
           <span data-id="int-solution-guarantee">For {"$\\vec{x}\\in\\mathbb{R}^N$"}, {"$\\left\\lceil\\vec{x}\\right\\rfloor$"} is the closest integer to {"$\\vec{x}$"}</span>
           <Bordered >
-            {"$$\\forall \\vec{x}'\\in\\mathbb{Z}^N:  \\left |\\left | \\vec{x} -  \\left\\lceil\\vec{x}\\right\\rfloor \\right |\\right |_p \\le \\left |\\left | \\vec{x} -  \\vec{x}' \\right |\\right |_p$$"}
+            <Annotated
+              content={"$\\forall \\vec{x}'\\in\\mathbb{Z}^N:  \\left |\\left | \\vec{x} -  \\left\\lceil\\vec{x}\\right\\rfloor \\right |\\right |_p \\le \\left |\\left | \\vec{x} -  \\vec{x}' \\right |\\right |_p$"}
+              glossary={{ p: "p\\in\\mathbb{N^+} \\cup \\{\\infty\\}" }}
+              style={{}}
+              revealReady={revealReady}
+            />
           </Bordered>
-          Holds due to monotonicity of norms iff:
+          Holds due to monotonicity of norms if:
           <Bordered dataId="closest-point">
-            {"$$\\forall x_j'\\in\\mathbb{Z}:   | x_j -  \\lceil x_j\\rfloor | \\le \\left | x_j -  x_j' \\right |$$"}
+            {"$\\forall x_j'\\in\\mathbb{Z}:$"}
+            <span class="fragment fragment-grow" data-fragment-index="2">{"$\\sum_{j=1}^N$"}</span>
+            {"$| x_j -  \\lceil x_j\\rfloor | $"}
+            <span class="fragment fragment-grow" data-fragment-index="1">{"$^p$"}</span>
+            {"$\\le $"}
+            <span class="fragment fragment-grow" data-fragment-index="2">{"$\\sum_{j=1}^N$"}</span>
+            {"$\\left | x_j -  x_j' \\right |$"}
+            <span class="fragment fragment-grow" data-fragment-index="1">{"$^p$"}</span>
           </Bordered>
         </section>
 
@@ -564,13 +565,27 @@ function App() {
           <Bordered style={{ margin: 10 }} dataId="closest-point">
             {"$$\\forall x_j'\\in\\mathbb{Z}:   | \\underbrace{x_j -  \\lceil x_j\\rfloor }_{\\eqqcolon d_j \\in  \\left[-\\frac{1}{2}, \\frac{1}{2}\\right]} | \\le \\left | x_j -  x_j' \\right |$$"}
           </Bordered>
-          <ul>
+          <ul style={{ marginBottom: 60 }}>
             <li>{"$\\exists z_j \\in\\mathbb{Z}: x_j' =  \\lceil x_j\\rfloor - z_j$"}</li>
           </ul>
+          <span>
+            {`$\\begin{aligned}
+            z=0: &\\quad
+            |x_j - \\lceil x_j\\rfloor | \\le |x_j - \\lceil x_j\\rfloor - \\cancel{z_j}| \\\\ 
+            
+            z\\neq0: &\\quad
+            |x_j - x_j' | 
+            = | \\underbrace{x_j - \\lceil x_j\\rfloor}_{d_j} - z_j|
+            \\overset{\\text{triangle}}{\\ge} \\underbrace{ |z_j| }_{\\ge 1} - \\underbrace{|d_j|}_{\\le \\frac{1}{2}} 
+            \\ge \\underbrace{|d_j|}_{\\le \\frac{1}{2}} ∎
+
+            \\end{aligned}
+            $`}
+          </span>
         </section>
 
         <section data-auto-animate>
-          <h1 data-id="h1">Rounding Lemma</h1>
+          <h1 data-id="h1">The tightest Cube</h1>
           <span data-id="int-solution-guarantee">{"$C_1^N(\\vec{z}) \\subseteq P^A_b$"} guarantees integer solution {"$\\left\\lceil \\vec{z} \\right\\rfloor$"}?</span>
           <Bordered>
             <ul>
@@ -578,6 +593,17 @@ function App() {
               <li>{"$\\left\\lceil \\left(\\frac{1}{2}, \\dots, \\frac{1}{2}\\right)^T \\right\\rfloor \\in C_1^N \\left(\\left(\\frac{1}{2}, \\dots, \\frac{1}{2}\\right)^T\\right)$"}</li>
             </ul>
           </Bordered>
+        </section>
+
+        <section data-auto-animate>
+          <h1 data-id="h1">Unit Cube Test</h1>
+          <Bordered>
+            {`$$A\\vec{z} \\le \\vec{b}' \\quad\\textit{where}\\quad \\vec{b}_i' \\coloneqq \\vec{b}_i - \\frac{1}{2} \\left|\\left|\\vec{a}_i\\right|\\right|_1$$`}
+          </Bordered>
+          <ul>
+            <li>Feasibility, no objective function</li>
+            <li><span data-id="int-solution-guarantee">Guarantees integer solution {"$\\left\\lceil \\vec{z} \\right\\rfloor$"}</span></li>
+          </ul>
         </section>
 
 

@@ -15,6 +15,29 @@
     font-size: 20pt !important;
 }
 
+/* change revealjs default fragment hidden behaviour to not take up space  */
+/* .reveal .slides section .fragment {
+    display: none;
+}
+
+.reveal .slides section .fragment.visible {
+    display: inline;
+} */
+
+.reveal .fragment-grow {
+    display: inline-block;
+    max-width: 0;
+    opacity: 0;
+    /* overflow: hidden; */
+    white-space: nowrap;
+    vertical-align: baseline;
+    transition: max-width 2s ease, opacity 2s ease;
+}
+
+.reveal .fragment-grow.visible {
+    max-width: 100vw;
+    opacity: 1;
+}
 
 /* https://www.w3schools.com/css/css_tooltip.asp */
 .tooltip {
