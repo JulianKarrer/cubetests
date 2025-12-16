@@ -9,3 +9,40 @@
 .top-space {
     margin-top: 50px !important;
 }
+
+/* resize some text labels created by jsxgraph */
+.rounded_jsx>span>span>span {
+    font-size: 20pt !important;
+}
+
+
+/* https://www.w3schools.com/css/css_tooltip.asp */
+.tooltip {
+    position: relative;
+    /* display: inline-block; */
+    border-bottom: 1px dotted black;
+    cursor: pointer;
+}
+
+/* Tooltip text */
+.tooltiptext {
+    visibility: hidden;
+    /* Hidden by default */
+    font-size: 3vmin;
+    background-color: black;
+    color: #ffffff;
+    text-align: center;
+    padding: 2px 5px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    bottom: 0;
+    transform: translateY(100%);
+    /* Ensure tooltip is displayed above content */
+}
+
+/* Show the tooltip text on hover */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}

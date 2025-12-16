@@ -140,7 +140,7 @@ export function feasibleGeometry(vertices) {
     }
 }
 
-export function FeasibleVolume({ vertices, color = 'royalblue', simple, opacity = 0.35 }) {
+export function FeasibleVolume({ vertices, color = 'royalblue', simple, opacity = 0.35, showEdges = true }) {
     const geom = useMemo(() => feasibleGeometry(vertices), [vertices])
     if (!geom) return null
     return (
@@ -160,6 +160,11 @@ export function FeasibleVolume({ vertices, color = 'royalblue', simple, opacity 
                     side={THREE.DoubleSide}
                 />
             </>}
+            {showEdges &&
+                <lineSegments>
+                    <edgesGeometry args={[geom]} />
+                    <lineBasicMaterial linewidth={2} color={"black"} />
+                </lineSegments>}
 
         </mesh>
     )

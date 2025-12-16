@@ -1,17 +1,18 @@
 import { useEffect, useRef } from "react"
 
 
-export default function CubeGraph({ }) {
+export default function CubeGraph({ name = "cubegraph1", fixedE = false }) {
     // logic for defining the board and drawing to it
     const logic = () => {
-        const b_l = -6
-        const b_r = 6
-        const b_d = -4
-        const b_u = 4
-        const s = 0.4
-        const e_max = 7
+        const b_l = -6 * (fixedE ? 0.4 : 1)
+        const b_r = 6 * (fixedE ? 0.4 : 1)
+        const b_d = -4 * (fixedE ? 0.4 : 1)
+        const b_u = 4 * (fixedE ? 0.4 : 1)
+        const s = fixedE ? 10 : 0.4
+        const e_max = fixedE ? 1 : 7
+        const e_min = fixedE ? 0.01 : 0.3
 
-        const board = JXG.JSXGraph.initBoard('cubegraph1', {
+        const board = JXG.JSXGraph.initBoard(name, {
             boundingbox: [b_l, b_u, b_r, b_d],
             axis: true,
             grid: true,
@@ -40,7 +41,9 @@ export default function CubeGraph({ }) {
             borders: { strokeWidth: 2 }
         });
 
-        const e_slider = board.create('slider', [[b_l + 0.5, b_d + 0.5], [b_l + 2.5, b_d + 0.5], [0.3, e_max / 3, e_max]], {
+        const o = fixedE ? 0.2 : 0.5
+        const w = fixedE ? 1 : 2
+        const e_slider = board.create('slider', [[b_l + o, b_d + o], [b_l + w + o, b_d + o], [e_min, e_max / 3, e_max]], {
             name: 'e',
             withLabel: true,
             label: { fontSize: 20 }
@@ -64,7 +67,10 @@ export default function CubeGraph({ }) {
             color: "green",
             snapSizeX: 1,
             snapSizeY: 1,
-            label: { visible: true, fontSize: 20, offset: [-40, 30] }
+            label: {
+                visible: true, fontSize: 20, offset: [-40, 30],
+                cssClass: "rounded_jsx",
+            }
         });
 
         // helper to read numeric edge length
@@ -147,23 +153,26 @@ export default function CubeGraph({ }) {
             board.update();
         });
 
-        let e_ok = eVal();
-        e_slider.on('drag', _ => {
-            if (squareInside()) {
-                e_ok = eVal();
-            } else {
-                const e_goal = eVal();
-                let e_cur = e_goal;
-                while (!squareInside(e_cur)) {
-                    e_cur -= 0.01 * (e_goal - e_ok)
+        if (!fixedE) {
+            let e_ok = eVal();
+            e_slider.on('drag', _ => {
+                if (squareInside()) {
+                    e_ok = eVal();
+                } else {
+                    const e_goal = eVal();
+                    let e_cur = e_goal;
+                    while (!squareInside(e_cur)) {
+                        e_cur -= 0.01 * (e_goal - e_ok)
+                    }
+                    e_slider.setValue(e_cur)
                 }
-                e_slider.setValue(e_cur)
-            }
 
-            board.update();
-        });
+                board.update()
+            });
+        }
 
-        board.update();
+
+        board.update()
     }
 
     // initialize JSXGraph when the div has loaded
@@ -173,10 +182,5 @@ export default function CubeGraph({ }) {
     }, [divRef])
 
     return (<>
-        <style>
-            {`#cubegraph1_jxgBoard1P55Label > span > span > span{
-                font-size: 20pt!important;
-            }`}
-        </style>
-        <div ref={divRef} id="cubegraph1" className="jxgbox" style={{ width: "100vmin", aspectRatio: 1.5, marginTop: 50, }}></div></>)
+        <div ref={divRef} id={name} className="jxgbox" style={{ width: "100vmin", aspectRatio: 1.5, marginTop: 50, }}></div></>)
 }

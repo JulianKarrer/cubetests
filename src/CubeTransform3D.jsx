@@ -59,7 +59,7 @@ export default function CubeTransform3D({ A, b, e, setE, varIndices, chebyshev, 
 
             {/* feasible volume */}
             <FeasibleVolume vertices={vertices} simple={true} color={'royalblue'} opacity={1} />
-            <FeasibleVolume vertices={vertices_orig} color={'royalblue'} opacity={0.1} />
+            <FeasibleVolume vertices={vertices_orig} color={'royalblue'} opacity={0.1} showEdges={false} />
 
             {chebyshev ? verts6.map((v_i, i) => {
                 return <Sphere position={[v_i.x, v_i.y, v_i.z]} scale={safe_e[0][0] / 2}>

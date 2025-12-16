@@ -21,6 +21,9 @@ function DirectionColouredVolume({ vertices, c, setFmin, setFmax }) {
     const objective = (x, y, z) => x * c[0] + y * c[1] + z * c[2]
     const geom = useMemo(() => {
         const geo = feasibleGeometry(vertices)
+        if (geo === null) {
+            return null
+        }
         // const workingGeo = geo.index ? geo.toNonIndexed() : geo
         const workingGeo = geo.index ? geo.toNonIndexed() : geo
         const posAttr = workingGeo.getAttribute('position')
@@ -72,6 +75,29 @@ function DirectionColouredVolume({ vertices, c, setFmin, setFmax }) {
     )
 }
 
+function Label3d({ children, x, y, z }) {
+    return <Html
+        position={[x, y + 0.2, z]}
+        center
+        transform={false}
+        distanceFactor={10}
+        occlude={false}
+        zIndexRange={[100, 0]}
+        style={{ pointerEvents: 'none' }}
+    >
+        <div style={{
+            padding: '5px 10px',
+            background: 'rgba(0,0,0,0.1)',
+            color: 'black',
+            borderRadius: 6,
+            fontSize: 14,
+            transform: 'translateY(-50%)'
+        }}>
+            {children}
+        </div>
+    </Html>
+}
+
 function OrientableArrow({
     colour = "red",
     c,
@@ -89,9 +115,10 @@ function OrientableArrow({
     return (
         <>
             {/* Visible arrow */}
-            <arrowHelper
+            {Math.abs(c[0]) + Math.abs(c[1]) + Math.abs(c[2]) > 0. && <arrowHelper
                 args={[direction, new THREE.Vector3(0, 0, 0), 1, colour]}
-            />
+            />}
+
             <DragControls
                 onDrag={(
                     localMatrix,
@@ -112,34 +139,17 @@ function OrientableArrow({
                         side={THREE.DoubleSide}
                     />
                 </Sphere>
-                <Html
-                    position={[c[0], c[1] + 0.2, c[2]]} // offset above the sphere
-                    center
-                    transform={false}
-                    distanceFactor={10}
-                    occlude={false}
-                    zIndexRange={[100, 0]}
-                    style={{ pointerEvents: 'none' }}
-                >
-                    <div style={{
-                        padding: '5px 10px',
-                        background: 'rgba(0,0,0,0.1)',
-                        color: 'black',
-                        borderRadius: 6,
-                        fontSize: 14,
-                        transform: 'translateY(-50%)'
-                    }}>
-                        c
-                    </div>
-                </Html>
+                <Label3d x={c[0]} y={c[1]} z={c[2]}>c</Label3d>
             </DragControls>
         </>
     );
 }
 
+
+
 export default function Simplex({ A, b, varIndices, style }) {
     const camPosFinal = [0, 4, -8]
-    const c_size = 0
+    const c_size = 0.
     const [c, setC] = useState([c_size, c_size, c_size])
     const [fmin, setFmin] = useState(0)
     const [fmax, setFmax] = useState(1)
@@ -160,47 +170,49 @@ export default function Simplex({ A, b, varIndices, style }) {
         // find vertex with greatest objective value
         let maxpos = vertices_orig[0]
         let max_val = -99999.
+        let minpos = vertices_orig[0]
+        let min_val = 99999.
         for (const v of vertices_orig) {
             const f_v = objective(v.x, v.y, v.z, c)
             if (f_v > max_val) {
                 max_val = f_v
                 maxpos = v
             }
+            if (f_v < min_val) {
+                min_val = f_v
+                minpos = v
+            }
         }
-        const colour = getColour(maxpos.x, maxpos.y, maxpos.z, c, fmin, fmax)
-
-        return <>
-            <Sphere position={maxpos} scale={0.1}>
+        const vertexMarker = (pos, name) => <>
+            <Sphere position={pos} scale={0.1}>
                 <meshBasicMaterial
-                    color={colour}
+                    color={getColour(pos.x, pos.y, pos.z, c, fmin, fmax)}
                     side={THREE.DoubleSide}
                 />
             </Sphere>
-            <Html
-                position={[maxpos.x, maxpos.y + 0.2, maxpos.z]} // offset above the sphere
-                center
-                transform={false}
-                distanceFactor={10}
-                occlude={false}
-                zIndexRange={[100, 0]}
-                style={{ pointerEvents: 'none' }}
-            >
-                <div style={{
-                    padding: '5px 10px',
-                    background: 'rgba(0,0,0,0.1)',
-                    color: 'black',
-                    borderRadius: 6,
-                    fontSize: 14,
-                    transform: 'translateY(-50%)'
-                }}>
-                    maximizer
-                </div>
-            </Html>
+            <Label3d x={pos.x} y={pos.y} z={pos.z}>{name}</Label3d>
+        </>
+
+        return <>
+            {Math.abs(c[0]) + Math.abs(c[1]) + Math.abs(c[2]) > 0. && vertexMarker(maxpos, "maximizer")}
+            {Math.abs(c[0]) + Math.abs(c[1]) + Math.abs(c[2]) > 0. && vertexMarker(minpos, "minimizer")}
         </>
     }, [vertices_orig, c])
 
 
-    return (<div style={{ height: "100vh", width: "100%" }}>
+    return (<div style={{ height: "100vh", width: "100%", ...style }}>
+        {/* colour scale  */}
+        <div style={{
+            position: "absolute",
+            width: 800,
+            height: 10,
+            bottom: 180,
+            left: "50vw",
+            transform: "translateX(-50%)",
+            background: "linear-gradient(90deg in hsl longer hue, hsla(261, 100%, 50%, 1.00), hsl(36,100%,50%))",
+            borderRadius: 15,
+        }}></div>
+        {/* three js canvas  */}
         <Canvas camera={{ position: camPosFinal, fov: 45, }}>
             {/* lighting */}
             <ambientLight intensity={Math.PI / 2} />
@@ -215,7 +227,7 @@ export default function Simplex({ A, b, varIndices, style }) {
             <OrientableArrow c={c} setC={setC} />
 
             {/* controls */}
-            <OrbitControls enabled={true} enablePan={false} makeDefault />
+            <OrbitControls enabled={true} enablePan={true} makeDefault />
             <Grid cellSize={50} infiniteGrid={true} side={2} sectionColor={"#ffffff"} position={[0, 0, 0]} />
 
         </Canvas>

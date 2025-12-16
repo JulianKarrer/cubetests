@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, Fragment } from "react";
 
 import katex from "katex";
 import "katex/dist/katex.min.css";
@@ -11,16 +11,25 @@ import "./theme.css";
 import "./index.css"
 import './App.css'
 import "./components/jsxgraphcore.js"
+import ShuffleIcon from "./assets/icons/arrows-shuffle.svg"
 import Annotated from "./components/Annotate";
 import Setting from "./Setting";
 import DragMove from "./components/DragMove";
 import CubeGraph from "./CubeGraph";
 import SingleConstraint from "./SingleConstraint";
-import CubeTransform2D from "./CubeTransform2D.jsx";
 import CubeTransform3D from "./CubeTransform3D.jsx";
 import Simplex from "./Simplex.jsx";
+import { ResultsFull, ResultsTime, ResultsSolve } from "./Results.jsx";
 
-function Matrix({ mat, setMat, label, style, lower_bound: lowerBound = null, matReset = null, initiallyExpanded = false }) {
+function gaussian(mean = 0, stdev = 1) {
+  //https://stackoverflow.com/questions/25582882/
+  const u = 1 - Math.random();
+  const v = Math.random();
+  const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  return z * stdev + mean;
+}
+
+function Matrix({ mat, setMat, label, style, lower_bound: lowerBound = null, matReset = null, initiallyExpanded = false, showShuffle = true }) {
   const cols = mat[0].length
   const rows = mat.length
 
@@ -51,6 +60,8 @@ function Matrix({ mat, setMat, label, style, lower_bound: lowerBound = null, mat
     });
   };
 
+  const stddev = 0.1;
+
   return (
     <DragMove
       onDragMove={handleDragMove}
@@ -59,23 +70,50 @@ function Matrix({ mat, setMat, label, style, lower_bound: lowerBound = null, mat
         position: "absolute",
         top: 15,
         left: 15,
-        background: "rgba(255, 255, 255, 0.8)",
+        background: isExpanded ? "white" : "rgba(255, 255, 255, 0.7)",
         borderRadius: 15,
         padding: 15,
-        zIndex: 1,
+        zIndex: isExpanded ? 2 : 1,
         ...style
       }}
       grabber={<span style={{ cursor: "pointer" }} onClick={() => { setIsExpanded(s => !s) }} onDoubleClick={() => { setMat(matReset ? matReset : initA) }}>{label}</span>}
     >
-      {/* label */}
-
+      {/* shuffle icon */}
+      {showShuffle && <button style={{
+        transition: "max-height 0.3s ease, opacity 0.2s ease, height 500ms ease",
+        maxHeight: isExpanded ? "30px" : "0px",
+        opacity: isExpanded ? 1 : 0,
+        height: isExpanded ? "30px" : "0px",
+        width: isExpanded ? "30px" : "0px",
+        display: isExpanded ? "inline-block" : "none",
+        background: "white",
+        border: "2px solid black",
+        borderRadius: 10,
+        position: "absolute",
+        left: "50%",
+        transform: "translateX(-50%)",
+        top: 110,
+        cursor: "pointer",
+        background: ` center / contain no-repeat url("${ShuffleIcon}")`
+      }}
+        onClick={(e) => {
+          let newA = mat.map(function (arr) {
+            const copy = arr.slice()
+            return copy.map(x => x + gaussian(0, stddev))
+          });
+          setMat(newA)
+        }}
+        title={`Add 𝒩(μ=0,σ=${(stddev * 100).toFixed(0)}%)`}
+      ></button>}
       {/* matrix grid */}
       <div
         className="matrix-container"
         style={{
+          marginTop: isExpanded && showShuffle ? 30 : 0,
           gridTemplateColumns: "auto ".repeat(cols),
           maxHeight: isExpanded ? "1000px" : "0px",
           opacity: isExpanded ? 1 : 0,
+          zIndex: isExpanded ? 5 : 0,
           overflow: "hidden",
           transition: "max-height 0.3s ease, opacity 0.2s ease, height 500ms ease",
           pointerEvents: isExpanded ? "auto" : "none"
@@ -143,10 +181,10 @@ function DragInput({ init = 0, value, setValue }) {
 }
 
 
-function Bordered({ children, style }) {
+function Bordered({ children, style, dataId }) {
   return <div style={{
     border: "2px black solid", borderRadius: "20px", padding: "3vmin", margin: "5vmin", position: "relative", textAlign: "center", ...style
-  }}>
+  }} data-id={dataId}>
     {children}
   </div>
 }
@@ -237,14 +275,15 @@ function App() {
     [0, 1, 0],
     [0, -1, 0]
   ]
-  let A_reset = [
-    [1, 0, 0],
-    [-1, 0, 0],
-    [0, 0, 1],
-    [0, 0, -1],
-    [0, 1, 0],
-    [0, -1, 0]
-  ]
+  let A_reset = A_init
+  // [
+  //   [1, 0, 0],
+  //   [-1, 0, 0],
+  //   [0, 0, 1],
+  //   [0, 0, -1],
+  //   [0, 1, 0],
+  //   [0, -1, 0]
+  // ]
   let b_init = [[1], [1], [1], [1], [1], [1]]
   let c_init = [[1]]
   let e_init = [[0]]
@@ -300,8 +339,8 @@ function App() {
             glossary={{
               "\\le": "\\text{component-wise} \\le",
               x: "x \\in \\mathbb{Z}^N",
-              A: "A \\in \\mathbb{R}^{M\\times N}",
-              b: "b \\in  \\mathbb{R}^{M}",
+              A: "A \\in \\mathbb{Q}^{M\\times N}",
+              b: "b \\in  \\mathbb{Q}^{M}",
             }}
             content={"$A \\vec{x} \\le \\vec{b}$ with $x \\in \\mathbb{Z}^N$"}
             revealReady={revealReady}
@@ -316,9 +355,9 @@ function App() {
             glossary={{
               "\\le": "\\text{component-wise} \\le",
               x: "x \\in \\mathbb{Z}^N",
-              A: "A \\in \\mathbb{R}^{M\\times N}",
-              b: "b \\in  \\mathbb{R}^{M}",
-              c: "c \\in  \\mathbb{R}",
+              A: "A \\in \\mathbb{Q}^{M\\times N}",
+              b: "b \\in  \\mathbb{Q}^{M}",
+              c: "c \\in  \\mathbb{Q}",
             }}
             content={"$A \\vec{x} \\le \\vec{b} \\cdot c$"}
             revealReady={revealReady}
@@ -349,8 +388,8 @@ function App() {
             <div className="top-space">Polyhedron Definition: </div>
             <Annotated content={`$P^A_b ≔ \\left\\{ \\vec{x} \\in \\mathbb{R}^N \\, \\middle | \\,  A\\vec{x}-\\vec{b} \\le 0 \\right \\}$`}
               glossary={{
-                A: "A \\in \\mathbb{R}^{M\\times N}",
-                b: "b \\in  \\mathbb{R}^{M}",
+                A: "A \\in \\mathbb{Q}^{M\\times N}",
+                b: "b \\in  \\mathbb{Q}^{M}",
                 e: "e \\in  \\mathbb{R}_+",
                 c: "c \\in \\mathbb{R}",
                 x: "x \\in \\mathbb{R}^N",
@@ -423,12 +462,14 @@ function App() {
         <section data-auto-animate>
           <h1 data-id="h1" className="top" >Geometric Meaning</h1>
           <CubeTransform3D A={A} b={b} e={e} setE={setE} varIndices={varIndices} chebyshev={chebyshev} />
-          <Matrix mat={A} setMat={setA} label={"$A$"} initiallyExpanded={false} matReset={A_reset} />
+          <Matrix mat={A} setMat={setA} label={"$A$"} initiallyExpanded={false} matReset={A_reset} style={{
+            top: "calc(50% - 180px)",
+          }} />
           <Matrix mat={b} setMat={setB} label={"$b$"} initiallyExpanded={false} style={{
             top: "50%",
             left: 15,
           }} />
-          <Matrix mat={e} setMat={setE} label={"$e$"} initiallyExpanded={true} lower_bound={0} matReset={e_init} style={{
+          <Matrix mat={e} setMat={setE} label={"$e$"} initiallyExpanded={true} lower_bound={0} matReset={e_init} showShuffle={false} style={{
             top: "50%",
             left: 175,
           }} />
@@ -460,14 +501,34 @@ function App() {
 
         <section data-auto-animate>
           <h1 data-id="h1" className="top">Simplex Algorithm</h1>
-          <Matrix mat={A} setMat={setA} label={"$A$"} initiallyExpanded={false} matReset={A_reset} />
+          <Matrix mat={A} setMat={setA} label={"$A$"} initiallyExpanded={false} matReset={A_reset} style={{
+            top: "calc(50% - 180px)",
+          }} />
           <Matrix mat={b} setMat={setB} label={"$b$"} initiallyExpanded={false} style={{
-            top: 15,
-            right: 15,
-            left: "auto",
-            // width: 100,
+            top: "50%",
+            left: 15,
           }} />
           <Simplex A={A} b={b} varIndices={varIndices} />
+          <div style={{ top: "50%", position: "absolute", right: 40, background: "rgba(255, 255, 255, 0.6)", borderRadius: 20, transform: "translateY(-50%)" }}>
+            <Bordered style={{ margin: 0 }}>
+              {`$$\\begin{aligned}
+            \\max_{\\vec{x}\\in\\mathbb{R}^N} \\quad\\vec{c} &\\cdot \\vec{x}\\\\
+            A\\vec{x}&\\le \\vec{b}
+              `}
+              {/* {`\\\\\\\\vec{x}&\\ge 0`} */}
+              {`
+            \\end{aligned}$$`}
+            </Bordered>
+          </div>
+
+          <ol style={{
+            position: "absolute",
+            margin: 0,
+            bottom: 10,
+          }}>
+            <li>Find Basic Feasible Solution</li>
+            <li>Pivot along increasing edges</li>
+          </ol>
         </section>
 
         <section data-auto-animate>
@@ -482,6 +543,33 @@ function App() {
         </section>
 
         <section data-auto-animate>
+          <h1 data-id="h1">Motivation</h1>
+          <CubeGraph name={"cubegraph2"} fixedE={true} />
+        </section>
+
+        <section data-auto-animate>
+          <h1 data-id="h1">Closest point Lemma</h1>
+          <span data-id="int-solution-guarantee">For {"$\\vec{x}\\in\\mathbb{R}^N$"}, {"$\\left\\lceil\\vec{x}\\right\\rfloor$"} is the closest integer to {"$\\vec{x}$"}</span>
+          <Bordered >
+            {"$$\\forall \\vec{x}'\\in\\mathbb{Z}^N:  \\left |\\left | \\vec{x} -  \\left\\lceil\\vec{x}\\right\\rfloor \\right |\\right |_p \\le \\left |\\left | \\vec{x} -  \\vec{x}' \\right |\\right |_p$$"}
+          </Bordered>
+          Holds due to monotonicity of norms iff:
+          <Bordered dataId="closest-point">
+            {"$$\\forall x_j'\\in\\mathbb{Z}:   | x_j -  \\lceil x_j\\rfloor | \\le \\left | x_j -  x_j' \\right |$$"}
+          </Bordered>
+        </section>
+
+        <section data-auto-animate>
+          <h1 data-id="h1">Proof: One Dimension</h1>
+          <Bordered style={{ margin: 10 }} dataId="closest-point">
+            {"$$\\forall x_j'\\in\\mathbb{Z}:   | \\underbrace{x_j -  \\lceil x_j\\rfloor }_{\\eqqcolon d_j \\in  \\left[-\\frac{1}{2}, \\frac{1}{2}\\right]} | \\le \\left | x_j -  x_j' \\right |$$"}
+          </Bordered>
+          <ul>
+            <li>{"$\\exists z_j \\in\\mathbb{Z}: x_j' =  \\lceil x_j\\rfloor - z_j$"}</li>
+          </ul>
+        </section>
+
+        <section data-auto-animate>
           <h1 data-id="h1">Rounding Lemma</h1>
           <span data-id="int-solution-guarantee">{"$C_1^N(\\vec{z}) \\subseteq P^A_b$"} guarantees integer solution {"$\\left\\lceil \\vec{z} \\right\\rfloor$"}?</span>
           <Bordered>
@@ -490,6 +578,23 @@ function App() {
               <li>{"$\\left\\lceil \\left(\\frac{1}{2}, \\dots, \\frac{1}{2}\\right)^T \\right\\rfloor \\in C_1^N \\left(\\left(\\frac{1}{2}, \\dots, \\frac{1}{2}\\right)^T\\right)$"}</li>
             </ul>
           </Bordered>
+        </section>
+
+
+        <section data-auto-animate>
+          <h1 data-id="h1">Infinite Lattice Width</h1>
+          {/* <ul>
+            <li></li>
+          </ul> */}
+        </section>
+
+        <section data-auto-animate>
+          <h1 data-id="h1" className="top">Results — Solved Instances</h1>
+          <ResultsSolve style={{ marginTop: 200 }} />
+        </section>
+        <section data-auto-animate>
+          <h1 data-id="h1" className="top">Results — Time Taken</h1>
+          <ResultsTime style={{ marginTop: 200 }} />
         </section>
 
         <section data-auto-animate>
