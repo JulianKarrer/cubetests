@@ -109,9 +109,9 @@ export function ResultsSolve({ style, showSubheader = false }) {
                         {NAMES.map((name, i) => <th key={i}>{name}</th>)}
                     </tr>
                     <tr>
-                        {<th className="tooltip">Instances<span class="tooltiptext">with Infinite Lattice Width (or ROTATE)</span></th>}
+                        {<th className="tooltip">Instances<span className="tooltiptext">with Infinite Lattice Width (or ROTATE)</span></th>}
                         {INSTANCES.map((s, i) => <th key={i}>{showPercentage ?
-                            <div className="tooltip">{(s / ORIG_INSTANCES[i]).toFixed(2) * 100 + "%"}<span class="tooltiptext">{`${s}/${ORIG_INSTANCES[i]}`}</span></div>
+                            <div className="tooltip">{(s / ORIG_INSTANCES[i]).toFixed(2) * 100 + "%"}<span className="tooltiptext">{`${s}/${ORIG_INSTANCES[i]}`}</span></div>
                             // `${s}/${ORIG_INSTANCES[i]}`
                             :
                             s
@@ -168,9 +168,9 @@ export function ResultsTime({ style }) {
                     {NAMES.map((name, i) => <th key={i}>{name}</th>)}
                 </tr>
                 <tr>
-                    {<th className="tooltip">Instances<span class="tooltiptext">with Infinite Lattice Width (or ROTATE)</span></th>}
+                    {<th className="tooltip">Instances<span className="tooltiptext">with Infinite Lattice Width (or ROTATE)</span></th>}
                     {INSTANCES.map((s, i) => <th key={i}>{showPercentage ?
-                        <div className="tooltip">{(s / ORIG_INSTANCES[i]).toFixed(2) * 100 + "%"}<span class="tooltiptext">{`${s}/${ORIG_INSTANCES[i]}`}</span></div>
+                        <div className="tooltip">{(s / ORIG_INSTANCES[i]).toFixed(2) * 100 + "%"}<span className="tooltiptext">{`${s}/${ORIG_INSTANCES[i]}`}</span></div>
                         // `${s}/${ORIG_INSTANCES[i]}`
                         :
                         s

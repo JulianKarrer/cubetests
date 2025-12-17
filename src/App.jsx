@@ -14,6 +14,7 @@ import "./index.css"
 import './App.css'
 import "./components/jsxgraphcore.js"
 import ShuffleIcon from "./assets/icons/arrows-shuffle.svg"
+import Boundedness from "./assets/images/boundedness_alpha.png"
 import Annotated from "./components/Annotate";
 import Setting from "./Setting";
 import DragMove from "./components/DragMove";
@@ -22,6 +23,7 @@ import SingleConstraint from "./SingleConstraint";
 import CubeTransform3D from "./CubeTransform3D.jsx";
 import Simplex from "./Simplex.jsx";
 import { ResultsFull, ResultsTime, ResultsSolve } from "./Results.jsx";
+import LatticeWidth from "./LatticeWidth.jsx";
 
 function gaussian(mean = 0, stdev = 1) {
   //https://stackoverflow.com/questions/25582882/
@@ -552,13 +554,17 @@ function App() {
           Holds due to monotonicity of norms if:
           <Bordered dataId="closest-point">
             {"$\\forall x_j'\\in\\mathbb{Z}:$"}
-            <span class="fragment fragment-grow" data-fragment-index="2">{"$\\sum_{j=1}^N$"}</span>
+            <span className="fragment fragment-grow" data-fragment-index="3">{"$\\sqrt[p]{}($"}</span>
+            <span className="fragment fragment-grow" data-fragment-index="2">{"$\\sum_{j=1}^N$"}</span>
             {"$| x_j -  \\lceil x_j\\rfloor | $"}
-            <span class="fragment fragment-grow" data-fragment-index="1">{"$^p$"}</span>
+            <span className="fragment fragment-grow" data-fragment-index="1">{"$^p$"}</span>
+            <span className="fragment fragment-grow" data-fragment-index="3">{"$)$"}</span>
             {"$\\le $"}
-            <span class="fragment fragment-grow" data-fragment-index="2">{"$\\sum_{j=1}^N$"}</span>
+            <span className="fragment fragment-grow" data-fragment-index="3">{"$\\sqrt[p]{}($"}</span>
+            <span className="fragment fragment-grow" data-fragment-index="2">{"$\\sum_{j=1}^N$"}</span>
             {"$\\left | x_j -  x_j' \\right |$"}
-            <span class="fragment fragment-grow" data-fragment-index="1">{"$^p$"}</span>
+            <span className="fragment fragment-grow" data-fragment-index="1">{"$^p$"}</span>
+            <span className="fragment fragment-grow" data-fragment-index="3">{"$)$"}</span>
           </Bordered>
         </section>
 
@@ -617,9 +623,12 @@ function App() {
 
         <section data-auto-animate>
           <h1 data-id="h1">Infinite Lattice Width</h1>
-          {/* <ul>
-            <li></li>
-          </ul> */}
+          <LatticeWidth />
+        </section>
+        <section data-auto-animate>
+          <h1 data-id="h1">Infinite Lattice Width</h1>
+          <img style={{ margin: 100 }} src={Boundedness}></img>
+          <span style={{ fontSize: "large", color: "rgba(0,0,0,0.6)" }}>"Decision Procedures for Linear Arithmetic" [Martin Bromberger 2019, Dissertation, p.48]</span>
         </section>
 
         <section data-auto-animate>

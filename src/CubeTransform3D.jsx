@@ -40,7 +40,6 @@ export default function CubeTransform3D({ A, b, e, setE, varIndices, chebyshev, 
     const [verts6, setVerts6] = useState(vertices)
     const [safe_e, setSafe_e] = useState(e)
     useEffect(() => {
-        console.log(vertices.length)
         if (vertices.length > 0) {
             setVerts6(vertices.slice())
             setSafe_e(e)
@@ -62,12 +61,12 @@ export default function CubeTransform3D({ A, b, e, setE, varIndices, chebyshev, 
             <FeasibleVolume vertices={vertices_orig} color={'royalblue'} opacity={0.1} showEdges={false} />
 
             {chebyshev ? verts6.map((v_i, i) => {
-                return <Sphere position={[v_i.x, v_i.y, v_i.z]} scale={safe_e[0][0] / 2}>
+                return <Sphere key={i} position={[v_i.x, v_i.y, v_i.z]} scale={safe_e[0][0] / 2}>
                     <meshStandardMaterial wireframe color={"orange"} />
                 </Sphere>
             }) :
                 verts6.map((v_i, i) => {
-                    return <Box position={[v_i.x, v_i.y, v_i.z]} scale={safe_e[0][0]}>
+                    return <Box key={i} position={[v_i.x, v_i.y, v_i.z]} scale={safe_e[0][0]}>
                         <meshStandardMaterial wireframe color={"orange"} />
                     </Box>
                 })
