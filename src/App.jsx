@@ -5,6 +5,8 @@ import "katex/dist/katex.min.css";
 import Reveal from "reveal.js";
 import "reveal.js/dist/reveal.css";
 import paper from "./assets/unit-cube-test.pdf"
+import thesis from "./assets/thesis_bromberger.pdf"
+import ctrlErgo from "./assets/ctrl-ergo-paper.pdf"
 
 import RevealMath from "reveal.js/plugin/math/math.js"
 import "./theme.css";
@@ -586,12 +588,18 @@ function App() {
 
         <section data-auto-animate>
           <h1 data-id="h1">The tightest Cube</h1>
-          <span data-id="int-solution-guarantee">{"$C_1^N(\\vec{z}) \\subseteq P^A_b$"} guarantees integer solution {"$\\left\\lceil \\vec{z} \\right\\rfloor$"}?</span>
+          <ul>
+            <li>{"$C_e^N(\\vec{z})$"} contains integer point iff.<br /> {`$
+          \\begin{aligned}
+          \\lceil\\vec{z}\\rfloor \\in \\left\\{ \\vec{x}\\in\\mathbb{R}^N \\middle| \\left|\\left| \\vec{x} - \\vec{z} \\right|\\right|_\\infty \\le \\frac{e}{2} \\right\\} \\\\
+          \\Longleftrightarrow\\qquad \\left|\\left| \\lceil\\vec{z}\\rfloor - \\vec{z} \\right|\\right|_\\infty \\le \\frac{e}{2}
+          \\end{aligned}
+          $`}
+            </li>
+            <li>{"$\\forall \\vec{z}\\in\\mathbb{R}^N:\\quad \\begin{aligned}\\left|\\left| \\lceil\\vec{z}\\rfloor - \\vec{z} \\right|\\right|_\\infty \\le \\frac{1}{2}\\end{aligned}$"}</li>
+          </ul>
           <Bordered>
-            <ul>
-              <li>{"$\\forall z_j \\in \\mathbb{R}: \\, \\left| \\left\\lceil z_j \\right\\rfloor - z_j\\right| \\le \\frac{1}{2}$"}</li>
-              <li>{"$\\left\\lceil \\left(\\frac{1}{2}, \\dots, \\frac{1}{2}\\right)^T \\right\\rfloor \\in C_1^N \\left(\\left(\\frac{1}{2}, \\dots, \\frac{1}{2}\\right)^T\\right)$"}</li>
-            </ul>
+            <span data-id="int-solution-guarantee">{"$C_1^N(\\vec{z}) \\subseteq P^A_b$"} guarantees integer solution {"$\\left\\lceil \\vec{z} \\right\\rfloor$"}</span>
           </Bordered>
         </section>
 
@@ -623,12 +631,24 @@ function App() {
           <ResultsTime style={{ marginTop: 200 }} />
         </section>
 
-        <section data-auto-animate>
+        <section data-auto-animate >
           <h1 data-id="h1">Summary</h1>
         </section>
-        <section data-auto-animate>
+
+        {/* appendices */}
+        <section data-auto-animate data-visibility="uncounted">
           <h1 data-id="h1">Appendix:  Paper</h1>
           <embed src={paper} style={{ width: "80vw", height: "80vh" }}
+            type="application/pdf" />
+        </section>
+        <section data-auto-animate data-visibility="uncounted">
+          <h1 data-id="h1">Appendix:  Thesis</h1>
+          <embed src={thesis} style={{ width: "80vw", height: "80vh" }}
+            type="application/pdf" />
+        </section>
+        <section data-auto-animate data-visibility="uncounted">
+          <h1 data-id="h1">Appendix:  CTRL-ERGO</h1>
+          <embed src={ctrlErgo} style={{ width: "80vw", height: "80vh" }}
             type="application/pdf" />
         </section>
 
