@@ -32,6 +32,15 @@ const TIMES = {
     "z3-4.4.0": [764, 525, 0.2, 383, 528],
 }
 
+const TIME_MINS = [
+    SOLVERS.map(s => TIMES[s][0]).reduce((a, b) => Math.min(a, b)),
+    SOLVERS.map(s => TIMES[s][1]).reduce((a, b) => Math.min(a, b)),
+    SOLVERS.map(s => TIMES[s][2]).reduce((a, b) => Math.min(a, b)),
+    SOLVERS.map(s => TIMES[s][3]).reduce((a, b) => Math.min(a, b)),
+    SOLVERS.map(s => TIMES[s][4]).reduce((a, b) => Math.min(a, b)),
+]
+
+
 function colourSolves(t) {
     if (t >= 0.999) { return "#048304ff" }
     // if (t > 0.9) { return "#9e7400ff" }
@@ -124,7 +133,10 @@ export function ResultsSolve({ style, showSubheader = false }) {
                 <tbody>
                     {SOLVERS.map((name, i) => <tr key={i} style={{ border: i == 0 ? "solid 2px black" : "" }}>
                         <td>{name}</td>
-                        {(SOLVES[name]).map((s, j) => <td key={j}><span style={{ color: colourSolves(s / INSTANCES[j]) }}>
+                        {(SOLVES[name]).map((s, j) => <td key={j}><span style={{
+                            textDecoration: s === INSTANCES[j] ? "underline" : "none",
+                            color: colourSolves(s / INSTANCES[j])
+                        }}>
                             {showPercentage ?
                                 (s / INSTANCES[j]).toFixed(2) * 100 + "%" :
                                 s
@@ -183,11 +195,19 @@ export function ResultsTime({ style }) {
             <tbody>
                 {SOLVERS.map((name, i) => <tr key={i} style={{ border: i == 0 ? "solid 2px black" : "" }}>
                     <td>{name}</td>
-                    {(TIMES[name]).map((s, j) => <td key={j}><span style={{ color: colourTimes(s / TIMES["SPASS-IQ-0.1"][j]) }}>{showPercentage ?
-                        (TIMES["SPASS-IQ-0.1"][j] / s * 100).toFixed(0) + "%"
-                        :
-                        s + "s"
-                    }</span></td>)}
+                    {(TIMES[name]).map((s, j) => {
+                        console.log(name, TIME_MINS[j], s, Math.abs(TIME_MINS[j] - s) < 1e-6)
+                        return (<td key={j}>
+                            <span style={{
+                                textDecoration: Math.abs(TIME_MINS[j] - s) < 1e-6 ? "underline" : "none",
+                                color: colourTimes(s / TIMES["SPASS-IQ-0.1"][j])
+                            }}>{showPercentage ?
+                                (TIMES["SPASS-IQ-0.1"][j] / s * 100).toFixed(0) + "%"
+                                :
+                                s + "s"
+                                }</span>
+                        </td>)
+                    })}
                 </tr>)}
 
             </tbody>

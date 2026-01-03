@@ -23,7 +23,12 @@ import SingleConstraint from "./SingleConstraint";
 import CubeTransform3D from "./CubeTransform3D.jsx";
 import Simplex from "./Simplex.jsx";
 import { ResultsFull, ResultsTime, ResultsSolve } from "./Results.jsx";
-import LatticeWidth from "./LatticeWidth.jsx";
+// import LatticeWidth from "./LatticeWidth.jsx";
+
+
+import Summary1 from "./assets/images/summary_constraint.png"
+import Summary2 from "./assets/images/summary_geometry.png"
+import Summary3 from "./assets/images/summary_box.png"
 
 function gaussian(mean = 0, stdev = 1) {
   //https://stackoverflow.com/questions/25582882/
@@ -621,14 +626,24 @@ function App() {
         </section>
 
 
-        <section data-auto-animate>
+        {/* <section data-auto-animate>
           <h1 data-id="h1">Infinite Lattice Width</h1>
           <LatticeWidth />
-        </section>
+        </section> */}
+
         <section data-auto-animate>
           <h1 data-id="h1">Infinite Lattice Width</h1>
-          <img style={{ margin: 100 }} src={Boundedness}></img>
-          <span style={{ fontSize: "large", color: "rgba(0,0,0,0.6)" }}>"Decision Procedures for Linear Arithmetic" [Martin Bromberger 2019, Dissertation, p.48]</span>
+          <img style={{ marginTop: 50, minWidth: "90vw", }} src={Boundedness}></img>
+          <div style={{ minWidth: "90vw", position: "relative", fontSize: "5vmin", display: "flex" }}>
+            <span style={{ flex: 1 }}>partially bounded</span>
+            <span style={{ flex: 1 }}>bounded</span>
+            <span style={{ flex: 1 }}>absolutely unbounded</span>
+          </div>
+          <span style={{
+            marginTop: "5vmin",
+            fontSize: "large",
+            color: "rgba(0,0,0,0.6)"
+          }}>"Decision Procedures for Linear Arithmetic" [Martin Bromberger 2019, Dissertation, p.48]</span>
         </section>
 
         <section data-auto-animate>
@@ -642,6 +657,20 @@ function App() {
 
         <section data-auto-animate >
           <h1 data-id="h1">Summary</h1>
+          <div style={{ width: "100vw", display: "flex", marginTop: 50 }}>
+            <div style={{ flex: 1, width: "20vw", margin: "1vw" }} >
+              <img src={Summary1}></img>
+              <span>Fit Cubes in {"$P_b^A$"}</span>
+            </div>
+            <div style={{ flex: 1, width: "20vw", margin: "1vw" }} >
+              <img src={Summary2}></img>
+              <span>Find {"$C^N_e(\\vec{z}) \\subseteq P_b^A$"}</span>
+            </div>
+            <div style={{ flex: 1, width: "20vw", margin: "1vw" }} >
+              <img src={Summary3}></img>
+              <span>{"$C^N_1(\\vec{z}) \\subseteq P_b^A$"} yields {"$\\lceil \\vec{z} \\rfloor $"}</span>
+            </div>
+          </div>
         </section>
 
         {/* appendices */}
@@ -679,7 +708,7 @@ function App() {
             </li>
           </ul>
         </section> */}
-      </div>
+      </div >
     </div >
   )
 }
