@@ -44,12 +44,13 @@ const TIME_MINS = [
 function colourSolves(t) {
     if (t >= 0.999) { return "#048304ff" }
     // if (t > 0.9) { return "#9e7400ff" }
-    if (t > 0.7) { return "#000000ff" }
-    return "#c70a00ff"
+    // if (t > 0.7) { return "#000000ff" }
+    return "#000000ff"
+    // return "#c70a00ff"
 }
 
 function colourTimes(t) {
-    if (t > 1.1) { return "#c70a00ff" }
+    // if (t > 1.1) { return "#c70a00ff" }
     if (t > 0.5) { return "#000000ff" }
     return "#048304ff"
 }
@@ -135,7 +136,12 @@ export function ResultsSolve({ style, showSubheader = false }) {
                         <td>{name}</td>
                         {(SOLVES[name]).map((s, j) => <td key={j}><span style={{
                             textDecoration: s === INSTANCES[j] ? "underline" : "none",
-                            color: colourSolves(s / INSTANCES[j])
+                            color: (
+                                // highlight cotrl ergo rotate score in different colour
+                                name === "ctrl-ergo" && j == INSTANCES.length - 1 ? "blue" :
+                                    // otherwise assign colour based on relative performance
+                                    colourSolves(s / INSTANCES[j])
+                            )
                         }}>
                             {showPercentage ?
                                 (s / INSTANCES[j]).toFixed(2) * 100 + "%" :
@@ -196,11 +202,15 @@ export function ResultsTime({ style }) {
                 {SOLVERS.map((name, i) => <tr key={i} style={{ border: i == 0 ? "solid 2px black" : "" }}>
                     <td>{name}</td>
                     {(TIMES[name]).map((s, j) => {
-                        console.log(name, TIME_MINS[j], s, Math.abs(TIME_MINS[j] - s) < 1e-6)
                         return (<td key={j}>
                             <span style={{
                                 textDecoration: Math.abs(TIME_MINS[j] - s) < 1e-6 ? "underline" : "none",
-                                color: colourTimes(s / TIMES["SPASS-IQ-0.1"][j])
+                                color: (
+                                    // highlight cotrl ergo rotate score in different colour
+                                    name === "ctrl-ergo" && j == INSTANCES.length - 1 ? "blue" :
+                                        // otherwise assign colour based on relative performance 
+                                        colourTimes(s / TIMES["SPASS-IQ-0.1"][j])
+                                )
                             }}>{showPercentage ?
                                 (TIMES["SPASS-IQ-0.1"][j] / s * 100).toFixed(0) + "%"
                                 :

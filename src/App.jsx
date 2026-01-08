@@ -234,7 +234,7 @@ function App() {
       hideInactiveCursor: false,
 
       katex: {
-        // local: 'node_modules/katex',
+        local: 'node_modules/katex',
         delimiters: [
           { left: '$$', right: '$$', display: true },
           { left: '$', right: '$', display: false },
