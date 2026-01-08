@@ -95,7 +95,6 @@ function Matrix({ mat, setMat, label, style, lower_bound: lowerBound = null, mat
         height: isExpanded ? "30px" : "0px",
         width: isExpanded ? "30px" : "0px",
         display: isExpanded ? "inline-block" : "none",
-        background: "white",
         border: "2px solid black",
         borderRadius: 10,
         position: "absolute",
@@ -234,7 +233,7 @@ function App() {
       hideInactiveCursor: false,
 
       katex: {
-        local: 'node_modules/katex',
+        local: import.meta.env.DEV ? 'node_modules/katex' : undefined,
         delimiters: [
           { left: '$$', right: '$$', display: true },
           { left: '$', right: '$', display: false },
