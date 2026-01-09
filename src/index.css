@@ -39,6 +39,13 @@
     opacity: 1;
 }
 
+.showhidefrag.fragment.current-visible.visible:not(.current-fragment) {
+    display: none !important;
+    height: 0px !important;
+    line-height: 0px !important;
+    font-size: 0px !important;
+}
+
 /* https://www.w3schools.com/css/css_tooltip.asp */
 .tooltip {
     position: relative;

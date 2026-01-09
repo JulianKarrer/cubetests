@@ -556,7 +556,7 @@ function App() {
             />
           </Bordered>
           Holds due to monotonicity of norms if:
-          <Bordered dataId="closest-point">
+          {/* <Bordered dataId="closest-point">
             {"$\\forall x_j'\\in\\mathbb{Z}:$"}
             <span className="fragment fragment-grow" data-fragment-index="3">{"$\\sqrt[p]{}($"}</span>
             <span className="fragment fragment-grow" data-fragment-index="2">{"$\\sum_{j=1}^N$"}</span>
@@ -569,6 +569,22 @@ function App() {
             {"$\\left | x_j -  x_j' \\right |$"}
             <span className="fragment fragment-grow" data-fragment-index="1">{"$^p$"}</span>
             <span className="fragment fragment-grow" data-fragment-index="3">{"$)$"}</span>
+          </Bordered> */}
+
+          <Bordered dataId="closest-point">
+            <span style={{ display: frag !== 1 ? "inline-block" : "none" }}>{"$\\forall x_j'\\in\\mathbb{Z}:$"}</span>
+            <span style={{ display: frag !== 1 ? "none" : "inline-block" }}>{"$\\forall x'\\in\\mathbb{Z}^N:$"}</span>
+            {/* <span className="fragment fragment-grow" data-fragment-index="2">{"$\\sqrt[p]{}(\\sum_{j=1}^N$"}</span> */}
+            <span className="fragment fragment-grow" data-fragment-index="1">{"$\\sup_{j\\in\\mathbb{N}_1^N}\\{$"}</span>
+            {"$| x_j -  \\lceil x_j\\rfloor | $"}
+            <span className="fragment fragment-grow" data-fragment-index="1">{"$\\}$"}</span>
+            {/* <span className="fragment fragment-grow" data-fragment-index="2">{"$^p)$"}</span> */}
+            {"$\\le $"}
+            {/* <span className="fragment fragment-grow" data-fragment-index="2">{"$\\sqrt[p]{}(\\sum_{j=1}^N$"}</span> */}
+            <span className="fragment fragment-grow" data-fragment-index="1">{"$\\sup_{j\\in\\mathbb{N}_1^N}\\{$"}</span>
+            {"$\\left | x_j -  x_j' \\right |$"}
+            <span className="fragment fragment-grow" data-fragment-index="1">{"$\\}$"}</span>
+            {/* <span className="fragment fragment-grow" data-fragment-index="2">{"$^p)$"}</span> */}
           </Bordered>
         </section>
 
@@ -645,10 +661,10 @@ function App() {
           }}>"Decision Procedures for Linear Arithmetic" [Martin Bromberger 2019, Dissertation, p.48]</span>
         </section>
 
-        <section data-auto-animate>
+        {/* <section data-auto-animate>
           <h1 data-id="h1" className="top">Results — Solved Instances</h1>
           <ResultsSolve style={{ marginTop: 200 }} />
-        </section>
+        </section> */}
         <section data-auto-animate>
           <h1 data-id="h1" className="top">Results — Time Taken</h1>
           <ResultsTime style={{ marginTop: 200 }} />
