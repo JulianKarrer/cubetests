@@ -206,7 +206,7 @@ function LinearCubeTransform({ style }) {
       C_e^N(\\vec{z})\\subseteq P^{A}_{b}
       \\Longleftrightarrow 
       &A\\vec{z} \\le \\vec{b}'\\\\
-      \\text{where: }\\quad&b_i' ≔ b_i - \\frac{e}{2}\\left|\\left| a_i\\right|\\right|_1 
+      \\text{where: }\\quad&b_i' ≔ b_i - \\frac{e}{2}\\left|\\left| \\vec{a}_i\\right|\\right|_1 
       \\end{aligned}$$ `}
     </Bordered>
   )
@@ -443,7 +443,7 @@ function App() {
           <div data-id={"vertex-set"} style={{ marginTop: "5vmin" }}>
             <span style={{ width: "100%" }}>Vertex Set into Objective:</span><br />
             {` $$
-             \\max_{\\vec{x}\\in\\mathbb{V}\\left(\\vec{z}, e\\right)} \\vec{a}_i^T \\vec{x}
+             \\max_{\\vec{x}\\in\\mathbb{V}\\left(\\vec{z}, e\\right)} \\vec{a}_i \\cdot \\vec{x}
              = \\max\\left\\{ \\vec{a}_i \\cdot \\left( z_1 \\pm \\frac{e}{2}, \\dots , z_N \\pm \\frac{e}{2}\\right)^T
               \\right \\}  $$`}
           </div>
@@ -463,7 +463,7 @@ function App() {
             {`$$
             C_e^N(\\vec{z})\\subseteq P^{a_i}_{b_i}
             \\quad\\Longleftrightarrow \\quad
-            \\vec{a}_i\\cdot\\vec{z} + \\frac{e}{2}\\left|\\left| a_i\\right|\\right|_1 \\le b_i 
+            \\vec{a}_i\\cdot\\vec{z} + \\frac{e}{2}\\left|\\left| \\vec{a}_i\\right|\\right|_1 \\le b_i 
             $$ `}
           </span>
           <LinearCubeTransform />
@@ -573,17 +573,17 @@ function App() {
           </Bordered> */}
 
           <Bordered dataId="closest-point">
-            <span style={{ display: frag !== 1 ? "inline-block" : "none" }}>{"$\\forall x_j'\\in\\mathbb{Z}:$"}</span>
+            <span style={{ display: frag !== 1 ? "inline-block" : "none" }}>{"$\\forall x'\\in\\mathbb{Z}:$"}</span>
             <span style={{ display: frag !== 1 ? "none" : "inline-block" }}>{"$\\forall x'\\in\\mathbb{Z}^N:$"}</span>
             {/* <span className="fragment fragment-grow" data-fragment-index="2">{"$\\sqrt[p]{}(\\sum_{j=1}^N$"}</span> */}
             <span className="fragment fragment-grow" data-fragment-index="1">{"$\\sup_{j\\in\\mathbb{N}_1^N}\\{$"}</span>
-            {"$| x_j -  \\lceil x_j\\rfloor | $"}
+            {"$| x -  \\lceil x\\rfloor | $"}
             <span className="fragment fragment-grow" data-fragment-index="1">{"$\\}$"}</span>
             {/* <span className="fragment fragment-grow" data-fragment-index="2">{"$^p)$"}</span> */}
             {"$\\le $"}
             {/* <span className="fragment fragment-grow" data-fragment-index="2">{"$\\sqrt[p]{}(\\sum_{j=1}^N$"}</span> */}
             <span className="fragment fragment-grow" data-fragment-index="1">{"$\\sup_{j\\in\\mathbb{N}_1^N}\\{$"}</span>
-            {"$\\left | x_j -  x_j' \\right |$"}
+            {"$\\left | x -  x' \\right |$"}
             <span className="fragment fragment-grow" data-fragment-index="1">{"$\\}$"}</span>
             {/* <span className="fragment fragment-grow" data-fragment-index="2">{"$^p)$"}</span> */}
           </Bordered>
@@ -592,21 +592,21 @@ function App() {
         <section data-auto-animate>
           <h1 data-id="h1">Proof: One Dimension</h1>
           <Bordered style={{ margin: 10 }} dataId="closest-point">
-            {"$$\\forall x_j'\\in\\mathbb{Z}:   | \\underbrace{x_j -  \\lceil x_j\\rfloor }_{\\eqqcolon d_j \\in  \\left[-\\frac{1}{2}, \\frac{1}{2}\\right]} | \\le \\left | x_j -  x_j' \\right |$$"}
+            {"$$\\forall x'\\in\\mathbb{Z}:   | \\underbrace{x -  \\lceil x\\rfloor }_{\\eqqcolon d \\in  \\left[-\\frac{1}{2}, \\frac{1}{2}\\right]} | \\le \\left | x -  x' \\right |$$"}
           </Bordered>
           <ul style={{ marginBottom: 60 }}>
-            <li>{"$\\exists z_j \\in\\mathbb{Z}: x_j' =  \\lceil x_j\\rfloor - z_j$"}</li>
+            <li>{"$\\exists z \\in\\mathbb{Z}: x' =  \\lceil x\\rfloor - z$"}</li>
           </ul>
           <span>
             {`$\\begin{aligned}
             z=0: &\\quad
-            |x_j - \\lceil x_j\\rfloor | \\le |x_j - \\lceil x_j\\rfloor - \\cancel{z_j}| \\\\ 
+            |x - \\lceil x\\rfloor | \\le |x - \\lceil x\\rfloor - \\cancel{z}| \\\\ 
             
             z\\neq0: &\\quad
-            |x_j - x_j' | 
-            = | \\underbrace{x_j - \\lceil x_j\\rfloor}_{d_j} - z_j|
-            \\overset{\\text{triangle}}{\\ge} \\underbrace{ |z_j| }_{\\ge 1} - \\underbrace{|d_j|}_{\\le \\frac{1}{2}} 
-            \\ge \\underbrace{|d_j|}_{\\le \\frac{1}{2}} ∎
+            |x - x' | 
+            = | \\underbrace{x - \\lceil x\\rfloor}_{d} - z|
+            \\overset{\\text{triangle}}{\\ge} \\underbrace{ |z| }_{\\ge 1} - \\underbrace{|d|}_{\\le \\frac{1}{2}} 
+            \\ge \\underbrace{|d|}_{\\le \\frac{1}{2}} ∎
 
             \\end{aligned}
             $`}
