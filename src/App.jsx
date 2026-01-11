@@ -7,6 +7,7 @@ import "reveal.js/dist/reveal.css";
 import paper from "./assets/unit-cube-test.pdf"
 import thesis from "./assets/thesis_bromberger.pdf"
 import ctrlErgo from "./assets/ctrl-ergo-paper.pdf"
+import thesisBern from "./assets/thesis_bern.pdf"
 
 import RevealMath from "reveal.js/plugin/math/math.js"
 import "./theme.css";
@@ -702,6 +703,11 @@ function App() {
         <section data-auto-animate data-visibility="uncounted">
           <h1 data-id="h1">Appendix:  CTRL-ERGO</h1>
           <embed src={ctrlErgo} style={{ width: "80vw", height: "80vh" }}
+            type="application/pdf" />
+        </section>
+        <section data-auto-animate data-visibility="uncounted">
+          <h1 data-id="h1">Appendix:  Linear Programming</h1>
+          <embed src={thesisBern} style={{ width: "80vw", height: "80vh" }}
             type="application/pdf" />
         </section>
 
