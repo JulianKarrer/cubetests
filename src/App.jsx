@@ -212,6 +212,13 @@ function LinearCubeTransform({ style }) {
   )
 }
 
+function EitherOrSpan({ condition, showTrue, showFalse }) {
+  return (<>
+    <span style={{ display: condition ? "inline-block" : "none" }}>{showTrue}</span>
+    <span style={{ display: condition ? "none" : "inline-block" }}>{showFalse}</span>
+  </>)
+}
+
 function App() {
   // initialize Reveal JS
   const deckDivRef = useRef(null);
@@ -573,17 +580,22 @@ function App() {
           </Bordered> */}
 
           <Bordered dataId="closest-point">
-            <span style={{ display: frag !== 1 ? "inline-block" : "none" }}>{"$\\forall x'\\in\\mathbb{Z}:$"}</span>
-            <span style={{ display: frag !== 1 ? "none" : "inline-block" }}>{"$\\forall x'\\in\\mathbb{Z}^N:$"}</span>
+            <EitherOrSpan condition={frag !== 1}
+              showTrue={"$\\forall x'\\in\\mathbb{Z}:$"}
+              showFalse={"$\\forall x'\\in\\mathbb{Z}^N:$"} />
             {/* <span className="fragment fragment-grow" data-fragment-index="2">{"$\\sqrt[p]{}(\\sum_{j=1}^N$"}</span> */}
             <span className="fragment fragment-grow" data-fragment-index="1">{"$\\sup_{j\\in\\mathbb{N}_1^N}\\{$"}</span>
-            {"$| x -  \\lceil x\\rfloor | $"}
+            <EitherOrSpan condition={frag !== 1}
+              showTrue={"$| x -  \\lceil x\\rfloor | $"}
+              showFalse={"$| x_j -  \\lceil x_j\\rfloor | $"} />
             <span className="fragment fragment-grow" data-fragment-index="1">{"$\\}$"}</span>
             {/* <span className="fragment fragment-grow" data-fragment-index="2">{"$^p)$"}</span> */}
             {"$\\le $"}
             {/* <span className="fragment fragment-grow" data-fragment-index="2">{"$\\sqrt[p]{}(\\sum_{j=1}^N$"}</span> */}
             <span className="fragment fragment-grow" data-fragment-index="1">{"$\\sup_{j\\in\\mathbb{N}_1^N}\\{$"}</span>
-            {"$\\left | x -  x' \\right |$"}
+            <EitherOrSpan condition={frag !== 1}
+              showTrue={"$\\left | x -  x' \\right |$"}
+              showFalse={"$\\left | x_j -  x_j' \\right |$"} />
             <span className="fragment fragment-grow" data-fragment-index="1">{"$\\}$"}</span>
             {/* <span className="fragment fragment-grow" data-fragment-index="2">{"$^p)$"}</span> */}
           </Bordered>
@@ -614,7 +626,7 @@ function App() {
         </section>
 
         <section data-auto-animate>
-          <h1 data-id="h1">The tightest Cube</h1>
+          <h1 data-id="h1">Smallest useful Cube</h1>
           <ul>
             <li>{"$C_e^N(\\vec{z})$"} contains integer point iff.<br /> {`$
           \\begin{aligned}
