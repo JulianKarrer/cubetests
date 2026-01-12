@@ -402,7 +402,7 @@ function App() {
                 }}
                 revealReady={revealReady} /></div>
             <div className="top-space">Polyhedron Definition: </div>
-            <Annotated content={`$P^A_b ≔ \\left\\{ \\vec{x} \\in \\mathbb{R}^N \\, \\middle | \\,  A\\vec{x}-\\vec{b} \\le 0 \\right \\}$`}
+            <Annotated content={`$P^A_b ≔ \\left\\{ \\vec{x} \\in \\mathbb{R}^N \\, \\middle | \\,  A\\vec{x} \\le \\vec{b}\\right \\}$`}
               glossary={{
                 A: "A \\in \\mathbb{Q}^{M\\times N}",
                 b: "b \\in  \\mathbb{Q}^{M}",
